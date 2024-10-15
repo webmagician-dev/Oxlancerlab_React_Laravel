@@ -36,11 +36,6 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
   );
 }
 
-StatisticsCard.defaultProps = {
-  color: "blue",
-  footer: null,
-};
-
 StatisticsCard.propTypes = {
   color: PropTypes.oneOf([
     "white",

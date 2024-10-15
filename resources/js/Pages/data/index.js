@@ -6,3 +6,4 @@ export * from "@/Pages/data/platform-settings-data";
 export * from "@/Pages/data/conversations-data";
 export * from "@/Pages/data/projects-data";
 export * from "@/Pages/data/authors-table-data";
+export * from "@/Pages/data/payment-address-data";

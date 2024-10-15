@@ -2,6 +2,13 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminPanelController;
+use App\Http\Controllers\PitchdeckController;
+use App\Http\Controllers\AirdropController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\PaymentAddressController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -15,13 +22,18 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', [DashboardController::class, 'home'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard/home', [DashboardController::class, 'home'])->name('dashboard/home');
-    Route::get('/dashboard/airdrop', [DashboardController::class, 'airdrop'])->name('dashboard/airdrop');
-    Route::get('/dashboard/pitchdecks', [DashboardController::class, 'pitchdecks'])->name('dashboard/pitchdecks');
-    Route::get('/dashboard/adminpanel', [DashboardController::class, 'adminpanel'])->name('dashboard/adminpanel');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/airdrop', [AirdropController::class, 'index'])->name('airdrop');
+    Route::get('/pitchdecks', [PitchdeckController::class, 'index'])->name('pitchdecks');
+    Route::get('/adminpanel', [AdminPanelController::class, 'index'])->name('adminpanel');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans');
+    Route::get('/paymentaddress', [PaymentAddressController::class, 'index'])->name('paymentaddress');
+    Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
+    Route::post('/projects/add-project', [ProjectController::class, 'store'])->name('add-projects');
 });
 
 Route::middleware('auth')->group(function () {

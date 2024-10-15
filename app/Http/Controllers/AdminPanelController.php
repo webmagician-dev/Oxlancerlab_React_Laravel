@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class DashboardController extends Controller
+class AdminPanelController extends Controller
 {
     public function index(Request $request): Response
     {
-        return Inertia::render('Dashboard/Home');
+        return Inertia::render('Adminpanel');
     }
 }

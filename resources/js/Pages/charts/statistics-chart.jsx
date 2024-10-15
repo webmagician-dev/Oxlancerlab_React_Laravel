@@ -31,11 +31,6 @@ export function StatisticsChart({ color, chart, title, description, footer }) {
   );
 }
 
-StatisticsChart.defaultProps = {
-  color: "blue",
-  footer: null,
-};
-
 StatisticsChart.propTypes = {
   color: PropTypes.oneOf([
     "white",
