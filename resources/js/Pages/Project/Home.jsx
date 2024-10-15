@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toastr from "toastr";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -34,7 +34,7 @@ import {
 import moment from "moment";
 import { format } from "date-fns";
 import { DayPicker } from "react-day-picker";
-import { usePage } from "@inertiajs/react";
+import { usePage, Link } from "@inertiajs/react";
 import {
     HomeIcon,
     CheckIcon,
@@ -43,37 +43,60 @@ import {
     ComputerDesktopIcon,
 } from "@heroicons/react/24/solid";
 
+
 export default function Project() {
     const user = usePage().props.auth.user;
-    const projects = usePage().props.projects;
+    const temp_projects = usePage().props.projects;
+    const openCount = usePage().props.openCount;
+    const finishCount = usePage().props.finishCount;
+    const closeCount = usePage().props.closeCount;
+
     const [dateFrom, setDateFrom] = useState(moment().subtract(7, "days"));
     const [dateTo, setDateTo] = useState(moment.now());
+    const [projects, setProjects] = useState([]);
+    const [open, setOpen] = useState(false);
 
-    const [open, setOpen] = React.useState(false);
+    const [view, setView] = useState("All")
+
+    useEffect(() => {
+        setProjects(temp_projects);
+    }, [temp_projects])
+
+    const [data, setData] = useState({
+        type: "", project_name: "", your_role: "", your_name: "",
+        your_country: "", client_name: "", client_country: "",
+        budget: "", period: "", period_unit: "", start_date: "",
+        got_from: "", project_status: ""
+    });
 
     const handleOpen = () => setOpen(!open);
-
-    const [project, setProject] = useState({ title: "", description: "" });
 
     function handleInput(e) {
         const name = e.target.name;
         const value = e.target.value;
-        setProject({ ...project, [name]: value });
+        setData({ ...data, [name]: value });
     }
 
-    async function savePost() {
+    const savePost = async (e) => {
+        e.preventDefault();
         try {
-            console.log("--running--");
-            alert("12341234");
-            let data = await axios.post(
-                "http://localhost:8000/projects/add-project"
-            );
-            alert("safs");
-            console.log(data);
-        } catch (error) {
-            console.log(error);
+            const response = await axios.post('/add-project', {
+                data,
+            })
+            setData({
+                type: "", project_name: "", your_role: "", your_name: "",
+                your_country: "", client_name: "", client_country: "",
+                budget: "", period: "", period_unit: "", start_date: "",
+                got_from: "", project_status: ""
+            });
+            toastr.success('Post saved Successfully')
+            console.log(response)
+
+        } catch (err) {
+            console.log(err)
         }
     }
+
 
     return (
         <>
@@ -95,7 +118,7 @@ export default function Project() {
                             >
                                 Open:
                                 <span className="mx-2 text-2xl text-blue-600">
-                                    1
+                                    {openCount}
                                 </span>
                             </Typography>
                             <Typography
@@ -105,7 +128,7 @@ export default function Project() {
                             >
                                 Finished:
                                 <span className="mx-2 text-2xl text-green-600">
-                                    1
+                                    {finishCount}
                                 </span>
                             </Typography>
                             <Typography
@@ -115,13 +138,13 @@ export default function Project() {
                             >
                                 Closed:
                                 <span className="mx-2 text-2xl text-red-600">
-                                    1
+                                    {closeCount}
                                 </span>
                             </Typography>
                         </div>
                     </div>
                 </div>
-                <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
+                <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm min:h">
                     <CardHeader
                         floated={false}
                         shadow={false}
@@ -277,19 +300,24 @@ export default function Project() {
                             <div className="w-96">
                                 <Tabs value="all">
                                     <TabsHeader>
-                                        <Tab value="all">
+                                        <Tab value="all" onClick={() => setView("All")}>
                                             <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             All
                                         </Tab>
-                                        <Tab value="app">
+                                        <Tab value={"open_project"} onClick={() => {
+                                            setView("open")
+                                            axios.get('/projects', {
+                                                view,
+                                            }).then(e.preventDefault(), location.reload());
+                                        }} >
                                             <ComputerDesktopIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             Open
                                         </Tab>
-                                        <Tab value="message">
+                                        <Tab value={"finish_project"} onClick={() => setView("finished")}>
                                             <CheckIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
                                             Finish
                                         </Tab>
-                                        <Tab value="settings">
+                                        <Tab value={"close_project"} onClick={() => setView("closed")}>
                                             <XMarkIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             Close
                                         </Tab>
@@ -347,90 +375,106 @@ export default function Project() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {projects.map((value, key) => {
-                                    const className = `py-3 px-5 ${
-                                        key === projects.length - 1
+                                {projects.data && projects.data.map((value, key) => {
+                                    if (value.status == view || view == "All") {
+                                        const className = `py-3 px-5 ${key === projects.data.length - 1
                                             ? ""
                                             : "border-b border-blue-gray-50"
-                                    }`;
+                                            }`;
 
-                                    return (
-                                        <tr key={value.project_name}>
-                                            <td className={className}>
-                                                <div className="flex items-center gap-4">
-                                                    <Typography
-                                                        color="blue-gray"
-                                                        className="font-bold"
-                                                    >
-                                                        {value.type}
+                                        return (
+                                            <tr key={key + value.project_name}>
+                                                <td className={className}>
+                                                    <div className="flex items-center gap-4">
+                                                        <Typography
+                                                            color="blue-gray"
+                                                            className="font-bold"
+                                                        >
+                                                            {value.type}
+                                                        </Typography>
+                                                    </div>
+                                                </td>
+                                                <td className={className}>
+                                                    <Typography className="text-xs font-medium text-blue-gray-600">
+                                                        {value.project_name}
                                                     </Typography>
-                                                </div>
-                                            </td>
-                                            <td className={className}>
-                                                <Typography className="text-xs font-medium text-blue-gray-600">
-                                                    {value.project_name}
-                                                </Typography>
-                                            </td>
-                                            <td className={className}>
-                                                <Typography className="text-xs font-medium text-blue-gray-600">
-                                                    {value.your_name}
-                                                </Typography>
-                                            </td>
-                                            <td className={className}>
-                                                <Typography className="text-xs font-medium text-blue-gray-600">
-                                                    {value.client_name}
-                                                </Typography>
-                                            </td>
-                                            <td className={className}>
-                                                <Typography className="text-xs font-medium text-blue-gray-600">
-                                                    {value.client_country}
-                                                </Typography>
-                                            </td>
-                                            <td className={className}>
-                                                <Typography className="text-xs font-medium text-blue-gray-600">
-                                                    {value.budget}
-                                                </Typography>
-                                            </td>
-                                            <td className={className}>
-                                                <Typography className="text-xs font-medium text-blue-gray-600">
-                                                    {value.start_date}
-                                                </Typography>
-                                            </td>
-                                            <td className={className}>
-                                                <Typography className="text-xs font-medium text-blue-gray-600">
-                                                    {value.period}{" "}
-                                                    {value.period_unit}
-                                                </Typography>
-                                            </td>
-                                            <td className={className}>
-                                                <Typography className="text-xs font-medium text-blue-gray-600">
-                                                    {value.got_from}
-                                                </Typography>
-                                            </td>
-                                            <td className={className}>
-                                                {value.status === "open" ? (
-                                                    <Chip
-                                                        color="blue"
-                                                        value="Working"
-                                                    />
-                                                ) : value.status ===
-                                                  "finished" ? (
-                                                    <Chip
-                                                        color="green"
-                                                        value="Finished"
-                                                    />
-                                                ) : (
-                                                    <Chip
-                                                        color="red"
-                                                        value="Closed"
-                                                    />
-                                                )}
-                                            </td>
-                                        </tr>
-                                    );
+                                                </td>
+                                                <td className={className}>
+                                                    <Typography className="text-xs font-medium text-blue-gray-600">
+                                                        {value.your_name}
+                                                    </Typography>
+                                                </td>
+                                                <td className={className}>
+                                                    <Typography className="text-xs font-medium text-blue-gray-600">
+                                                        {value.client_name}
+                                                    </Typography>
+                                                </td>
+                                                <td className={className}>
+                                                    <Typography className="text-xs font-medium text-blue-gray-600">
+                                                        {value.client_country}
+                                                    </Typography>
+                                                </td>
+                                                <td className={className}>
+                                                    <Typography className="text-xs font-medium text-blue-gray-600">
+                                                        {value.budget}
+                                                    </Typography>
+                                                </td>
+                                                <td className={className}>
+                                                    <Typography className="text-xs font-medium text-blue-gray-600">
+                                                        {value.start_date}
+                                                    </Typography>
+                                                </td>
+                                                <td className={className}>
+                                                    <Typography className="text-xs font-medium text-blue-gray-600">
+                                                        {value.period}{" "}
+                                                        {value.period_unit}
+                                                    </Typography>
+                                                </td>
+                                                <td className={className}>
+                                                    <Typography className="text-xs font-medium text-blue-gray-600">
+                                                        {value.got_from}
+                                                    </Typography>
+                                                </td>
+                                                <td className={className}>
+                                                    {value.status === "open" ? (
+                                                        <Chip
+                                                            color="blue"
+                                                            value="Working"
+                                                        />
+                                                    ) : value.status ===
+                                                        "finished" ? (
+                                                        <Chip
+                                                            color="green"
+                                                            value="Finished"
+                                                        />
+                                                    ) : (
+                                                        <Chip
+                                                            color="red"
+                                                            value="Closed"
+                                                        />
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    }
+
                                 })}
                             </tbody>
                         </table>
+                        <div className="flex justify-center gap-4 mt-4">
+                            {projects.links && projects.links.map((link, index) => (
+                                <Link
+                                    key={index}
+                                    href={link.url}
+                                    className={`page-link bg-grey-200 p-2 rounded-2 ${link.active ? 'active' : ''}`}
+                                    preserveScroll
+                                    preserveState
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                            {/* {projects.links()} */}
+                        </div>
                     </CardBody>
                 </Card>
             </AuthenticatedLayout>
@@ -445,24 +489,34 @@ export default function Project() {
                 <DialogHeader>Add project.</DialogHeader>
                 <DialogBody>
                     <Card color="transparent" shadow={false}>
-                        <form className="w-full">
+                        <form className="w-full" onSubmit={savePost}>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div>
                                     <Typography variant="h6" color="blue-gray">
                                         Type
                                     </Typography>
-                                    <Select size="md">
-                                        <Option value="contract">
+
+                                    <Select size="md" onChange={(e) => {
+                                        const data = {
+                                            target: {
+                                                name: 'type',
+                                                value: e
+                                            }
+                                        }
+                                        //console.log(data);
+                                        handleInput(data)
+                                    }}>
+                                        <Option value="contract" name="type">
                                             Contract
                                         </Option>
-                                        <Option value="full-time">
+                                        <Option value="full-time" name="type">
                                             Full-time
                                         </Option>
-                                        <Option value="internship">
+                                        <Option value="internship" name="type">
                                             Internship
                                         </Option>
-                                        <Option value="project">Project</Option>
-                                        <Option value="task">Task</Option>
+                                        <Option value="project" name="type">Project</Option>
+                                        <Option value="task" name="type">Task</Option>
                                     </Select>
                                 </div>
                                 <div>
@@ -475,6 +529,10 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="project_name"
+                                        onChange={handleInput}
+                                        value={data.project_name}
                                     />
                                 </div>
                                 <div>
@@ -487,6 +545,10 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="your_role"
+                                        onChange={handleInput}
+                                        value={data.your_role}
                                     />
                                 </div>
                                 <div>
@@ -494,13 +556,15 @@ export default function Project() {
                                         your_name
                                     </Typography>
                                     <Input
-                                        name="tessasdaft"
                                         className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
                                         labelProps={{
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="your_name"
                                         onChange={handleInput}
+                                        value={data.your_name}
                                     />
                                 </div>
                                 <div>
@@ -513,6 +577,10 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="your_country"
+                                        onChange={handleInput}
+                                        value={data.your_country}
                                     />
                                 </div>
                                 <div>
@@ -525,6 +593,10 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="client_name"
+                                        onChange={handleInput}
+                                        value={data.client_name}
                                     />
                                 </div>
                                 <div>
@@ -537,6 +609,10 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="client_country"
+                                        onChange={handleInput}
+                                        value={data.client_country}
                                     />
                                 </div>
                                 <div>
@@ -549,6 +625,10 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="budget"
+                                        onChange={handleInput}
+                                        value={data.budget}
                                     />
                                 </div>
                                 <div>
@@ -561,11 +641,43 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="period"
+                                        onChange={handleInput}
+                                        value={data.period}
                                     />
                                 </div>
                                 <div>
                                     <Typography variant="h6" color="blue-gray">
                                         period_unit
+                                    </Typography>
+
+                                    <Select size="md" onChange={(e) => {
+                                        const data = {
+                                            target: {
+                                                name: 'period_unit',
+                                                value: e
+                                            }
+                                        }
+                                        //console.log(data);
+                                        handleInput(data)
+                                    }}>
+                                        <Option value="min" name="type">
+                                            Min
+                                        </Option>
+                                        <Option value="hour" name="type">
+                                            Hour
+                                        </Option>
+                                        <Option value="day" name="type">
+                                            Day
+                                        </Option>
+                                        <Option value="month" name="type">Month</Option>
+                                        <Option value="year" name="type">Year</Option>
+                                    </Select>
+                                </div>
+                                <div>
+                                    <Typography variant="h6" color="blue-gray">
+                                        start_date
                                     </Typography>
                                     <Input
                                         className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
@@ -573,6 +685,10 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="start_date"
+                                        onChange={handleInput}
+                                        value={data.start_date}
                                     />
                                 </div>
                                 <div>
@@ -585,7 +701,37 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
+                                        type="text"
+                                        name="got_from"
+                                        onChange={handleInput}
+                                        value={data.got_from}
                                     />
+                                </div>
+                                <div>
+                                    <Typography variant="h6" color="blue-gray">
+                                        Status
+                                    </Typography>
+
+                                    <Select size="md" onChange={(e) => {
+                                        const data = {
+                                            target: {
+                                                name: 'project_status',
+                                                value: e
+                                            }
+                                        }
+                                        //console.log(data);
+                                        handleInput(data)
+                                    }}>
+                                        <Option value="Open" name="type">
+                                            Open
+                                        </Option>
+                                        <Option value="Finished" name="type">
+                                            Finished
+                                        </Option>
+                                        <Option value="Closed" name="type">
+                                            Closed
+                                        </Option>
+                                    </Select>
                                 </div>
                             </div>
                             <div className="flex justify-end mt-2">
@@ -600,8 +746,7 @@ export default function Project() {
                                 <Button
                                     variant="gradient"
                                     color="green"
-                                    type="button"
-                                    onClick={savePost}
+                                    type="submit"
                                 >
                                     <span>Save</span>
                                 </Button>

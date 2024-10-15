@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/plans', [PlanController::class, 'index'])->name('plans');
     Route::get('/paymentaddress', [PaymentAddressController::class, 'index'])->name('paymentaddress');
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
-    Route::post('/projects/add-project', [ProjectController::class, 'store'])->name('add-projects');
+    Route::post('/add-project', [ProjectController::class, 'store'])->name('add-projects');
 });
 
 Route::middleware('auth')->group(function () {
@@ -42,4 +42,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
