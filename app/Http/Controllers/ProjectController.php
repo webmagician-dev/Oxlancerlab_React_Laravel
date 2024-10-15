@@ -17,9 +17,6 @@ class ProjectController extends Controller
   public function index(Request $request): Response
   {
     // dd($request->all());
-    if ($request) {
-      # code...
-    }
     $projects = Project::all(); // Change the number as needed
     $openedProjects = 0;
     $closedProjects = 0;
