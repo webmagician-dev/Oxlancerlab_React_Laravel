@@ -1,185 +1,219 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
     Typography,
     Card,
     CardHeader,
     CardBody,
-    IconButton,
-    Menu,
-    MenuHandler,
-    MenuList,
-    MenuItem,
-    Avatar,
-    Tooltip,
-    Progress,
     Button,
-    Dialog,
-    DialogHeader,
-    DialogBody,
-    DialogFooter,
-    Input,
-    Checkbox,
-    Select,
-    Option,
-    Tabs,
-    TabsHeader,
-    Tab,
 } from "@material-tailwind/react";
 
 import { usePage } from "@inertiajs/react";
-import {
-    CheckCircleIcon,
-    EllipsisVerticalIcon,
-    HomeIcon,
-    CheckIcon,
-    CalendarIcon,
-} from "@heroicons/react/24/solid";
-import { projectsTableData } from "@/Pages/data";
+import { PlusIcon } from "@heroicons/react/24/solid";
+import { HonestWeekPicker } from "@/Components/HonestWeekPicker";
+import moment from "moment";
+import EditPlan from "./EditPlan";
+import AddPlan from "./AddPlan";
+import { toast } from "react-toastify";
 
 export default function Plan() {
     const user = usePage().props.auth.user;
     const plans = usePage().props.plans;
+    const { flash } = usePage().props;
 
+    const [planData, setPlanData] = React.useState(plans);
     const [open, setOpen] = React.useState(false);
-
+    const [editOpen, setEditOpen] = React.useState(false);
+    const [plan, setPlan] = React.useState();
     const handleOpen = () => setOpen(!open);
+    const handleEditOpen = (plan) => {
+        if (plan) {
+            if (plan.user_id === user.name) {
+                setPlan(plan);
+                setEditOpen(!editOpen);
+            }
+        } else {
+            setEditOpen(!editOpen);
+        }
+    };
+
+    const [week, setWeek] = useState({ firstDay: moment() });
+
+    const [values, setValues] = useState({
+        id: " ",
+        payments: 0,
+        bids: 0,
+        new_projects: 0,
+        new_accounts: 0,
+        study: "React",
+    });
+
+    const handleShowAll = () => {
+        setPlanData(plans);
+    };
+
+    const onChange = (week) => {
+        setWeek(week);
+    };
+
+    const convertDate = (date) => {
+        let dt = new Date(date);
+
+        return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
+    };
+
+    useEffect(() => {
+        flash &&
+            flash.message &&
+            toast.success(flash.message, {
+                position: "bottom-right",
+            });
+    }, [flash]);
+
+    const isPeriodFrom = (plan, date) => {
+        return plan.period_from === date;
+    };
+    const isPeriodTo = (plan, date) => {
+        return plan.period_to === date;
+    };
+    useEffect(() => {
+        if (plans && week) {
+            const filtered = plans.filter((plan) => {
+                return (
+                    isPeriodFrom(plan, convertDate(week.firstDay)) &&
+                    isPeriodTo(plan, convertDate(week.lastDay))
+                );
+            });
+
+            setPlanData(filtered);
+        }
+    }, [week, plans]);
 
     return (
         <>
             <AuthenticatedLayout title={"Plans"}>
-                <div className="relative mt-8 h-37 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
-                    <div className="absolute inset-0 h-full w-full bg-gray-900/75" />
+                <div className="flex justify-center items-center gap-4 mt-8 h-37 p-1 w-full bg-white rounded-2xl">
+                    Select Week:
+                    <HonestWeekPicker onChange={onChange} />
+                    or
+                    <Button
+                        variant="text"
+                        color="gray"
+                        className="border gap-2"
+                        onClick={handleShowAll}
+                    >
+                        Show All
+                    </Button>
                 </div>
+
                 <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
                     <CardHeader
                         floated={false}
                         shadow={false}
                         color="transparent"
-                        className="m-0 flex items-center justify-between p-6"
+                        className="m-0 p-6"
                     >
-                        <div>
-                            <Typography
-                                variant="h4"
-                                color="blue-gray"
-                                className="mb-1"
-                            >
-                                Plans
-                            </Typography>
-                        </div>
-                        <div className="flex items-center">
-                            <div className="w-96">
-                                <Tabs value="app">
-                                    <TabsHeader>
-                                        <Tab value="app">
-                                            <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
-                                            Week
-                                        </Tab>
-                                        <Tab value="message">
-                                            <CalendarIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
-                                            Month
-                                        </Tab>
-                                    </TabsHeader>
-                                </Tabs>
+                        <div className=" flex items-center justify-between">
+                            <div>
+                                <Typography
+                                    variant="h4"
+                                    color="blue-gray"
+                                    className="mb-1"
+                                >
+                                    Plans
+                                </Typography>
                             </div>
-                            <Menu placement="left-start">
-                                <MenuHandler>
-                                    <IconButton
-                                        size="sm"
-                                        variant="text"
-                                        color="blue-gray"
-                                    >
-                                        <EllipsisVerticalIcon
-                                            strokeWidth={3}
-                                            fill="currenColor"
-                                            className="h-6 w-6"
-                                        />
-                                    </IconButton>
-                                </MenuHandler>
-                                <MenuList>
-                                    <MenuItem onClick={handleOpen}>
-                                        Add New Plan
-                                    </MenuItem>
-                                    <MenuItem>Show My Plans</MenuItem>
-                                    <MenuItem>Show All Plans</MenuItem>
-                                </MenuList>
-                            </Menu>
+                            <div className="flex items-center">
+                                <Button
+                                    className="ml-auto flex gap-2"
+                                    onClick={handleOpen}
+                                >
+                                    <PlusIcon className="h-4 w-4 stroke-2" />
+                                    Add Plan
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className={open ? "block" : "hidden"}>
+                            {open && (
+                                <AddPlan
+                                    open={open}
+                                    handleOpen={handleOpen}
+                                    user={user}
+                                    week={week}
+                                />
+                            )}
                         </div>
                     </CardHeader>
                     <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-                        <table className="w-full min-w-[640px] table-auto">
+                        <table className="w-full min-w-[640px] table-fixed">
                             <thead>
                                 <tr>
                                     {[
-                                        "Payments",
-                                        "Bids",
-                                        "New_projects",
+                                        "No",
                                         "Period",
-                                        "Progress",
+                                        "User",
+                                        "Payments",
+                                        "Projects",
+                                        "Bids",
+                                        "Accounts",
+                                        "Study",
                                     ].map((el) => (
                                         <th
                                             key={el}
                                             className="border-b border-blue-gray-50 py-3 px-6 text-left"
                                         >
-                                            <Typography
-                                                variant="small"
-                                                className="text-[11px] font-medium uppercase text-blue-gray-400"
-                                            >
-                                                {el}
-                                            </Typography>
+                                            {el}
                                         </th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
-                                {plans.map((value, key) => {
+                                {planData.map((value, key) => {
                                     const className = `py-3 px-5 ${
-                                        key === plans.length - 1
+                                        key === planData.length - 1
                                             ? ""
                                             : "border-b border-blue-gray-50"
                                     }`;
 
                                     return (
-                                        <tr key={name}>
+                                        <tr
+                                            key={key}
+                                            onClick={() =>
+                                                handleEditOpen(value)
+                                            }
+                                            className="cursor-pointer"
+                                        >
                                             <td className={className}>
                                                 <Typography
                                                     variant="small"
                                                     className="text-xs font-medium text-blue-gray-600"
                                                 >
-                                                    {value.payments}
+                                                    {key + 1}
                                                 </Typography>
                                             </td>
                                             <td className={className}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="text-xs font-medium text-blue-gray-600"
-                                                >
-                                                    {value.bids}
-                                                </Typography>
+                                                {value.period_from}
+                                                <br />
+                                                {value.period_to}
                                             </td>
                                             <td className={className}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="text-xs font-medium text-blue-gray-600"
-                                                >
-                                                    {value.new_projects}
-                                                </Typography>
+                                                {value.user_id}
                                             </td>
                                             <td className={className}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="text-xs font-medium text-blue-gray-600"
-                                                >
-                                                    {value.period_from}
-                                                </Typography>
+                                                {value.payments}
                                             </td>
                                             <td className={className}>
-                                                <Typography
-                                                    variant="small"
-                                                    className="text-xs font-medium text-blue-gray-600"
-                                                >
-                                                    {value.period_to}
-                                                </Typography>
+                                                {value.new_projects}
+                                            </td>
+                                            <td className={className}>
+                                                {value.bids}
+                                            </td>
+                                            <td className={className}>
+                                                {value.new_accounts}
+                                            </td>
+                                            <td className={className}>
+                                                {value.study}
                                             </td>
                                         </tr>
                                     );
@@ -188,103 +222,14 @@ export default function Plan() {
                         </table>
                     </CardBody>
                 </Card>
+                <EditPlan
+                    open={editOpen}
+                    handleOpen={handleEditOpen}
+                    plan={plan}
+                    values={values}
+                    setValues={setValues}
+                />
             </AuthenticatedLayout>
-            <Dialog
-                open={open}
-                handler={handleOpen}
-                animate={{
-                    mount: { scale: 1, y: 0 },
-                    unmount: { scale: 0.9, y: -100 },
-                }}
-            >
-                <DialogHeader>Add plan.</DialogHeader>
-                <DialogBody>
-                    <Card color="transparent" shadow={false}>
-                        <form className="w-full">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <div>
-                                    <Typography variant="h6" color="blue-gray">
-                                        Payments
-                                    </Typography>
-                                    <Input
-                                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
-                                        labelProps={{
-                                            className:
-                                                "before:content-none after:content-none",
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <Typography variant="h6" color="blue-gray">
-                                        Bids
-                                    </Typography>
-                                    <Input
-                                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
-                                        labelProps={{
-                                            className:
-                                                "before:content-none after:content-none",
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <Typography variant="h6" color="blue-gray">
-                                        New_projects
-                                    </Typography>
-                                    <Input
-                                        name="test"
-                                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
-                                        labelProps={{
-                                            className:
-                                                "before:content-none after:content-none",
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <Typography variant="h6" color="blue-gray">
-                                        Period_from
-                                    </Typography>
-                                    <Input
-                                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
-                                        labelProps={{
-                                            className:
-                                                "before:content-none after:content-none",
-                                        }}
-                                    />
-                                </div>
-                                <div>
-                                    <Typography variant="h6" color="blue-gray">
-                                        Period_to
-                                    </Typography>
-                                    <Input
-                                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
-                                        labelProps={{
-                                            className:
-                                                "before:content-none after:content-none",
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex justify-end mt-2">
-                                <Button
-                                    variant="text"
-                                    color="red"
-                                    onClick={handleOpen}
-                                    className="mr-1"
-                                >
-                                    <span>Cancel</span>
-                                </Button>
-                                <Button
-                                    variant="gradient"
-                                    color="green"
-                                    type="submit"
-                                >
-                                    <span>Save</span>
-                                </Button>
-                            </div>
-                        </form>
-                    </Card>
-                </DialogBody>
-            </Dialog>
         </>
     );
 }

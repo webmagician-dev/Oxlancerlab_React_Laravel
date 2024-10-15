@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
+            $table->enum('plan_type', ['week', 'month']);
             $table->integer('payments');
             $table->integer('bids');
             $table->integer('new_projects');
+            $table->integer('new_accounts');
+            $table->string('study');
             $table->date('period_from');
             $table->date('period_to');
             $table->integer('user_id');
