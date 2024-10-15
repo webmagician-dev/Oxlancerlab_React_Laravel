@@ -29,8 +29,9 @@ import {
     Popover,
     PopoverHandler,
     PopoverContent,
+    Chip,
 } from "@material-tailwind/react";
-
+import moment from "moment";
 import { format } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import { usePage } from "@inertiajs/react";
@@ -39,12 +40,14 @@ import {
     CheckIcon,
     EllipsisVerticalIcon,
     XMarkIcon,
+    ComputerDesktopIcon,
 } from "@heroicons/react/24/solid";
 
 export default function Project() {
     const user = usePage().props.auth.user;
     const projects = usePage().props.projects;
-    const [date, setDate] = useState();
+    const [dateFrom, setDateFrom] = useState(moment().subtract(7, "days"));
+    const [dateTo, setDateTo] = useState(moment.now());
 
     const [open, setOpen] = React.useState(false);
 
@@ -123,9 +126,9 @@ export default function Project() {
                         floated={false}
                         shadow={false}
                         color="transparent"
-                        className="m-0 flex items-center justify-between p-6"
+                        className="m-0 flex items-center  lg:flex-row flex-col gap-1 justify-between p-6"
                     >
-                        <div className="flex items-center justify-between w-1/2">
+                        <div className="flex lg:flex-row flex-col items-center justify-between w-1/2">
                             <Typography
                                 variant="h3"
                                 color="blue-gray"
@@ -140,15 +143,17 @@ export default function Project() {
                                             label="From"
                                             onChange={() => null}
                                             value={
-                                                date ? format(date, "PPP") : ""
+                                                dateFrom
+                                                    ? format(dateFrom, "PPP")
+                                                    : ""
                                             }
                                         />
                                     </PopoverHandler>
                                     <PopoverContent>
                                         <DayPicker
                                             mode="single"
-                                            selected={date}
-                                            onSelect={setDate}
+                                            selected={dateFrom}
+                                            onSelect={setDateFrom}
                                             showOutsideDays
                                             className="border-0"
                                             classNames={{
@@ -205,15 +210,17 @@ export default function Project() {
                                             label="To"
                                             onChange={() => null}
                                             value={
-                                                date ? format(date, "PPP") : ""
+                                                dateTo
+                                                    ? format(dateTo, "PPP")
+                                                    : ""
                                             }
                                         />
                                     </PopoverHandler>
                                     <PopoverContent>
                                         <DayPicker
                                             mode="single"
-                                            selected={date}
-                                            onSelect={setDate}
+                                            selected={dateTo}
+                                            onSelect={setDateTo}
                                             showOutsideDays
                                             className="border-0"
                                             classNames={{
@@ -268,19 +275,23 @@ export default function Project() {
                         </div>
                         <div className="flex items-center">
                             <div className="w-96">
-                                <Tabs value="app">
+                                <Tabs value="all">
                                     <TabsHeader>
-                                        <Tab value="app">
+                                        <Tab value="all">
                                             <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
+                                            All
+                                        </Tab>
+                                        <Tab value="app">
+                                            <ComputerDesktopIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             Open
                                         </Tab>
                                         <Tab value="message">
                                             <CheckIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
-                                            Finished
+                                            Finish
                                         </Tab>
                                         <Tab value="settings">
                                             <XMarkIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
-                                            Closed
+                                            Close
                                         </Tab>
                                     </TabsHeader>
                                 </Tabs>
@@ -315,11 +326,14 @@ export default function Project() {
                                     {[
                                         "Type",
                                         "Project",
+                                        "Your Name",
                                         "Client_name",
                                         "Client_country",
                                         "Budget",
+                                        "Start Date",
                                         "Period",
-                                        "Got_from",
+                                        "Source",
+                                        "Status",
                                     ].map((el) => (
                                         <th
                                             key={el}
@@ -359,6 +373,11 @@ export default function Project() {
                                             </td>
                                             <td className={className}>
                                                 <Typography className="text-xs font-medium text-blue-gray-600">
+                                                    {value.your_name}
+                                                </Typography>
+                                            </td>
+                                            <td className={className}>
+                                                <Typography className="text-xs font-medium text-blue-gray-600">
                                                     {value.client_name}
                                                 </Typography>
                                             </td>
@@ -374,6 +393,11 @@ export default function Project() {
                                             </td>
                                             <td className={className}>
                                                 <Typography className="text-xs font-medium text-blue-gray-600">
+                                                    {value.start_date}
+                                                </Typography>
+                                            </td>
+                                            <td className={className}>
+                                                <Typography className="text-xs font-medium text-blue-gray-600">
                                                     {value.period}{" "}
                                                     {value.period_unit}
                                                 </Typography>
@@ -382,6 +406,25 @@ export default function Project() {
                                                 <Typography className="text-xs font-medium text-blue-gray-600">
                                                     {value.got_from}
                                                 </Typography>
+                                            </td>
+                                            <td className={className}>
+                                                {value.status === "open" ? (
+                                                    <Chip
+                                                        color="blue"
+                                                        value="Working"
+                                                    />
+                                                ) : value.status ===
+                                                  "finished" ? (
+                                                    <Chip
+                                                        color="green"
+                                                        value="Finished"
+                                                    />
+                                                ) : (
+                                                    <Chip
+                                                        color="red"
+                                                        value="Closed"
+                                                    />
+                                                )}
                                             </td>
                                         </tr>
                                     );

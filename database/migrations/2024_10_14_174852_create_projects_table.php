@@ -23,7 +23,9 @@ return new class extends Migration
             $table->float('budget');
             $table->integer('period');
             $table->enum('period_unit', ['min', 'hour', 'day', 'month', 'year']);
+            $table->date('start_date');
             $table->string('got_from');
+            $table->enum('status', ['open', 'finished', 'closed']);
             $table->integer('user_id');
             $table->timestamps();
         });
