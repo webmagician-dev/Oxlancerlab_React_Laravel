@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('project_id');
             $table->integer('amount');
             $table->integer('history');
-            $table->integer('user_id');
+            $table->string('user_id');
             $table->datetime('date');
             $table->timestamps();
         });

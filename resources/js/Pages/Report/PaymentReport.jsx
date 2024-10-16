@@ -40,7 +40,7 @@ import {
     CurrencyDollarIcon,
 } from "@heroicons/react/24/solid";
 
-export default function PaymentReport({ reports }) {
+export default function PaymentReport({ payments_reports }) {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => setOpen(!open);
@@ -90,53 +90,21 @@ export default function PaymentReport({ reports }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {reports.map((value, key) => {
+                        {payments_reports.map((value, key) => {
                             const className = `py-3 px-5 ${
-                                key === reports.length - 1
+                                key === payments_reports.length - 1
                                     ? ""
                                     : "border-b border-blue-gray-50"
                             }`;
 
                             return (
-                                <tr key={name}>
+                                <tr key={key}>
                                     <td className={className}>
                                         <Typography
                                             variant="small"
                                             className="text-xs font-medium text-blue-gray-600"
                                         >
-                                            {value.payments}
-                                        </Typography>
-                                    </td>
-                                    <td className={className}>
-                                        <Typography
-                                            variant="small"
-                                            className="text-xs font-medium text-blue-gray-600"
-                                        >
-                                            {value.bids}
-                                        </Typography>
-                                    </td>
-                                    <td className={className}>
-                                        <Typography
-                                            variant="small"
-                                            className="text-xs font-medium text-blue-gray-600"
-                                        >
-                                            {value.new_projects}
-                                        </Typography>
-                                    </td>
-                                    <td className={className}>
-                                        <Typography
-                                            variant="small"
-                                            className="text-xs font-medium text-blue-gray-600"
-                                        >
-                                            {value.finished_projects}
-                                        </Typography>
-                                    </td>
-                                    <td className={className}>
-                                        <Typography
-                                            variant="small"
-                                            className="text-xs font-medium text-blue-gray-600"
-                                        >
-                                            {value.failed_projects}
+                                            {key + 1}
                                         </Typography>
                                     </td>
                                     <td className={className}>
@@ -145,6 +113,38 @@ export default function PaymentReport({ reports }) {
                                             className="text-xs font-medium text-blue-gray-600"
                                         >
                                             {value.date}
+                                        </Typography>
+                                    </td>
+                                    <td className={className}>
+                                        <Typography
+                                            variant="small"
+                                            className="text-xs font-medium text-blue-gray-600"
+                                        >
+                                            {value.user_id}
+                                        </Typography>
+                                    </td>
+                                    <td className={className}>
+                                        <Typography
+                                            variant="small"
+                                            className="text-xs font-medium text-blue-gray-600"
+                                        >
+                                            {value.amount}
+                                        </Typography>
+                                    </td>
+                                    <td className={className}>
+                                        <Typography
+                                            variant="small"
+                                            className="text-xs font-medium text-blue-gray-600"
+                                        >
+                                            {value.project}
+                                        </Typography>
+                                    </td>
+                                    <td className={className}>
+                                        <Typography
+                                            variant="small"
+                                            className="text-xs font-medium text-blue-gray-600"
+                                        >
+                                            {value.txHash}
                                         </Typography>
                                     </td>
                                 </tr>

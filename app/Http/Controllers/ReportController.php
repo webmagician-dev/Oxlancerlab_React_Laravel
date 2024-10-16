@@ -13,9 +13,10 @@ use Inertia\Response;
 class ReportController extends Controller
 {
     //
-        public function index(Request $request): Response
+    public function index(Request $request): Response
     {
         $reports = DB::select('select * from reports ');
-        return Inertia::render('Report/Home', [ 'reports' => $reports]);
+        $payments_reports = DB::select('select * from payments_reports ');
+        return Inertia::render('Report/Home', [ 'reports' => $reports, 'payments_reports' => $payments_reports]);
     }
 }

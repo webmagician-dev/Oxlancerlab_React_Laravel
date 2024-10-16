@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Typography, Button, Input } from "@material-tailwind/react";
 import { router } from "@inertiajs/react";
 
-export default function AddDailyReport({ open, handleOpen, user, date }) {
+export default function AddPaymentReport({ open, handleOpen, user, week }) {
     const convertDate = (date) => {
         let dt = new Date(date);
 
@@ -14,9 +14,8 @@ export default function AddDailyReport({ open, handleOpen, user, date }) {
         bids: 0,
         new_projects: 0,
         new_accounts: 0,
-        finished_projects: "",
-        closed_projects: "",
-        date: date,
+        study: "",
+        user_id: user.name,
     });
 
     const submit = (e) => {
@@ -50,20 +49,6 @@ export default function AddDailyReport({ open, handleOpen, user, date }) {
                 </div>
                 <div>
                     <Typography variant="h6" color="blue-gray">
-                        New Accounts
-                    </Typography>
-                    <Input
-                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
-                        labelProps={{
-                            className: "before:content-none after:content-none",
-                        }}
-                        id="new_accounts"
-                        value={data.new_accounts}
-                        onChange={handleChange}
-                    />
-                </div>
-                <div>
-                    <Typography variant="h6" color="blue-gray">
                         New_projects
                     </Typography>
                     <Input
@@ -91,23 +76,24 @@ export default function AddDailyReport({ open, handleOpen, user, date }) {
                         onChange={handleChange}
                     />
                 </div>
+
                 <div>
                     <Typography variant="h6" color="blue-gray">
-                        Finished Project
+                        New Accounts
                     </Typography>
                     <Input
                         className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
                         labelProps={{
                             className: "before:content-none after:content-none",
                         }}
-                        id="study"
-                        value={data.study}
+                        id="new_accounts"
+                        value={data.new_accounts}
                         onChange={handleChange}
                     />
                 </div>
                 <div>
                     <Typography variant="h6" color="blue-gray">
-                        Closed Project
+                        Study
                     </Typography>
                     <Input
                         className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"

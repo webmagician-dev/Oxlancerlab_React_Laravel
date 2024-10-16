@@ -48,8 +48,8 @@ import PaymentReport from "./PaymentReport";
 import moment from "moment";
 
 export default function Report() {
-    const user = usePage().props.auth.user;
     const reports = usePage().props.reports;
+    const payments_reports = usePage().props.payments_reports;
     const [date, setDate] = useState();
     const [page, setPage] = useState("daily");
 
@@ -161,8 +161,15 @@ export default function Report() {
                         </div>
                     </div>
                 </div>
-                {page === "daily" && <DailyReport reports={reports} />}
-                {page === "payment" && <PaymentReport reports={reports} />}
+                {page === "daily" && (
+                    <DailyReport reports={reports} date={date} />
+                )}
+                {page === "payment" && (
+                    <PaymentReport
+                        payments_reports={payments_reports}
+                        date={date}
+                    />
+                )}
             </AuthenticatedLayout>
         </>
     );
