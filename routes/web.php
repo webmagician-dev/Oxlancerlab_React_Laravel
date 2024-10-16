@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/paymentaddress', [PaymentAddressController::class, 'index'])->name('paymentaddress');
     // Projects
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
-    Route::post('/add_project', [ProjectController::class, 'store'])->name('add_projects');
+    Route::post('/add_project', [ProjectController::class, 'store'])->name('add_project');
 });
 
 Route::middleware('auth')->group(function () {

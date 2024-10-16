@@ -62,6 +62,7 @@ export default function Plan() {
 
         return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
     };
+    console.log(dt);
 
     useEffect(() => {
         flash &&
@@ -130,7 +131,7 @@ export default function Plan() {
                                     onClick={handleOpen}
                                 >
                                     <PlusIcon className="h-4 w-4 stroke-2" />
-                                    Add Plan
+                                    Add Pladddn
                                 </Button>
                             </div>
                         </div>

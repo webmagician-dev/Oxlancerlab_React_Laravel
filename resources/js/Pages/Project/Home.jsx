@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import toastr from "toastr";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
     Typography,
@@ -53,6 +53,7 @@ export default function Project() {
     const [projects, setProjects] = useState([]);
     const [open, setOpen] = useState(false);
     const [filter, setFilter] = useState(filterType || 'all');
+
     console.log("----saf-----", dateTo);
 
     const [view, setView] = useState("All")
@@ -109,7 +110,7 @@ export default function Project() {
 
                 window.location.reload();
             }
-            toast.success("asldflaskdjf");
+
         } catch (err) {
             console.log(err)
         }
