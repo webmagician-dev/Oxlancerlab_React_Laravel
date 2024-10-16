@@ -16,37 +16,45 @@ class ProjectController extends Controller
   //
   public function index(Request $request): Response
   {
-    // dd($request->all());
-    $projects = Project::all(); // Change the number as needed
-    $openedProjects = 0;
-    $closedProjects = 0;
-    $finishedProjects = 0;
+    // Get the 'type' parameter from the request
+    $type = $request->input('status', 'all'); // default to 'all' if not specified
 
-    foreach ($projects as $project) {
-      switch ($project->status) {
-        case "closed":
-          $closedProjects++;
-          break;
-        case "finished":
-          $finishedProjects++;
-          break;
-        case "open":
-          $openedProjects++;
-          break;
-        default:
-          break;
-      }
+    // Base query to get projects based on the filter
+    $query = Project::query();
+
+    switch ($type) {
+      case 'open':
+        $query->where('status', 'open');
+        break;
+      case 'finished':
+        $query->where('status', 'finished');
+        break;
+      case 'closed':
+        $query->where('status', 'closed');
+        break;
+      case 'all':
+      default:
+        // No filter, so fetch all projects
+        break;
     }
-    $projects = Project::paginate(5);
-    // Render the Inertia view with the fetched projects
+
+    // Order by created date and paginate
+    $projects = $query->orderBy('created_at', 'desc')->paginate(30);
+
+    // Count project statuses
+    $allProjects = Project::all();
+    $openedProjects = $allProjects->where('status', 'open')->count();
+    $closedProjects = $allProjects->where('status', 'closed')->count();
+    $finishedProjects = $allProjects->where('status', 'finished')->count();
+
+    // Render the Inertia view with the fetched projects and counts
     return Inertia::render('Project/Home', [
       'projects' => $projects,
       'openCount' => $openedProjects,
+      'closeCount' => $closedProjects,
       'finishCount' => $finishedProjects,
-      'closeCount' => $closedProjects
+      'filterType' => $type, // pass the filter type to the frontend
     ]);
-
-    // return Inertia::render('Project/Home', ['projects' => $projects]);
   }
   public function store(Request $request)
   {
@@ -82,7 +90,8 @@ class ProjectController extends Controller
     $project->status = $request->data['project_status'];
 
     $project->save();
-
-    return response(['status' => 'success', 'projects' => $project, 'code' => 200]);
+    return Inertia::render('Project/Home', [
+      'project' => $project,
+    ]);
   }
 }

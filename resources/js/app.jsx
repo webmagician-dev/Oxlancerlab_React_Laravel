@@ -8,6 +8,9 @@ import { MaterialTailwindControllerProvider } from "@/Context";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
+import { InertiaProgress } from '@inertiajs/progress';
+
+InertiaProgress.init();
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

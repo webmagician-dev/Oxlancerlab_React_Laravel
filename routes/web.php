@@ -30,9 +30,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/pitchdecks', [PitchdeckController::class, 'index'])->name('pitchdecks');
     Route::get('/adminpanel', [AdminPanelController::class, 'index'])->name('adminpanel');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans');
     Route::get('/paymentaddress', [PaymentAddressController::class, 'index'])->name('paymentaddress');
+    // Projects
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
-    Route::post('/projects/add-project', [ProjectController::class, 'store'])->name('add-projects');
+    Route::post('/add_project', [ProjectController::class, 'store'])->name('add_projects');
 });
 
 Route::middleware('auth')->group(function () {

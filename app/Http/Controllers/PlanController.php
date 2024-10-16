@@ -59,6 +59,5 @@ class PlanController extends Controller
 
             return back()->with('message', 'You Plan created successfully!');
         }
-
     }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
     Typography,
@@ -34,7 +34,8 @@ import {
 import moment from "moment";
 import { format } from "date-fns";
 import { DayPicker } from "react-day-picker";
-import { usePage, Link } from "@inertiajs/react";
+import { Inertia } from '@inertiajs/inertia';
+import { usePage, Link, router } from "@inertiajs/react";
 import {
     HomeIcon,
     CheckIcon,
@@ -45,22 +46,24 @@ import {
 
 
 export default function Project() {
+    const { projects: temp_projects, openCount, flash, closeCount, finishCount, filterType, links } = usePage().props;
     const user = usePage().props.auth.user;
-    const temp_projects = usePage().props.projects;
-    const openCount = usePage().props.openCount;
-    const finishCount = usePage().props.finishCount;
-    const closeCount = usePage().props.closeCount;
-
     const [dateFrom, setDateFrom] = useState(moment().subtract(7, "days"));
     const [dateTo, setDateTo] = useState(moment.now());
     const [projects, setProjects] = useState([]);
     const [open, setOpen] = useState(false);
+    const [filter, setFilter] = useState(filterType || 'all');
+    console.log("----saf-----", dateTo);
 
     const [view, setView] = useState("All")
 
     useEffect(() => {
         setProjects(temp_projects);
-    }, [temp_projects])
+    }, [temp_projects]);
+
+    useEffect(() => {
+        setFilter(filterType);
+    }, [filterType]);
 
     const [data, setData] = useState({
         type: "", project_name: "", your_role: "", your_name: "",
@@ -68,6 +71,15 @@ export default function Project() {
         budget: "", period: "", period_unit: "", start_date: "",
         got_from: "", project_status: ""
     });
+
+    const handleFilterChange = async (newFilter) => {
+        setFilter(newFilter);
+        Inertia.visit(`/projects`, {
+            method: 'get',
+            data: { filter: newFilter },
+            preserveState: true,
+        });
+    };
 
     const handleOpen = () => setOpen(!open);
 
@@ -77,33 +89,38 @@ export default function Project() {
         setData({ ...data, [name]: value });
     }
 
+
     const savePost = async (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.post('/add-project', {
-                data,
-            })
-            setData({
-                type: "", project_name: "", your_role: "", your_name: "",
-                your_country: "", client_name: "", client_country: "",
-                budget: "", period: "", period_unit: "", start_date: "",
-                got_from: "", project_status: ""
-            });
-            toastr.success('Post saved Successfully')
-            console.log(response)
+        //router.post(route("add_project"), data);
 
+        try {
+            const response = await axios.post('/add_project', {
+                data,
+            });
+
+            if (response.status === 200) {
+                setData({
+                    type: "", project_name: "", your_role: "", your_name: "",
+                    your_country: "", client_name: "", client_country: "",
+                    budget: "", period: "", period_unit: "", start_date: "",
+                    got_from: "", project_status: ""
+                });
+
+                window.location.reload();
+            }
+            toast.success("asldflaskdjf");
         } catch (err) {
             console.log(err)
         }
     }
-
 
     return (
         <>
             <AuthenticatedLayout title={"Projects"}>
                 <div className="flex mt-8 h-87 w-full justify-center overflow-hidden rounded-xl">
                     <div className="md:w-2/3 w-full flex justify-center mb-3">
-                        <div className="flex md:flex-row flex-col items-center justify-between py-2 px-4 mb-2 h-full bg-gray-300 rounded-md w-full">
+                        <Card className="flex md:flex-row flex-col items-center justify-between py-2 px-4 mb-2 h-full rounded-md w-full">
                             <Typography
                                 variant="h5"
                                 color="blue-gray"
@@ -141,7 +158,7 @@ export default function Project() {
                                     {closeCount}
                                 </span>
                             </Typography>
-                        </div>
+                        </Card>
                     </div>
                 </div>
                 <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm min:h">
@@ -304,20 +321,15 @@ export default function Project() {
                                             <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             All
                                         </Tab>
-                                        <Tab value={"open_project"} onClick={() => {
-                                            setView("open")
-                                            axios.get('/projects', {
-                                                view,
-                                            }).then(e.preventDefault(), location.reload());
-                                        }} >
+                                        <Tab value={"open_project"} onClick={() => setView("open")} >
                                             <ComputerDesktopIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             Open
                                         </Tab>
-                                        <Tab value={"finish_project"} onClick={() => setView("finished")}>
+                                        <Tab value={"finish_project"} onClick={() => setView("finished")}  >
                                             <CheckIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
                                             Finish
                                         </Tab>
-                                        <Tab value={"close_project"} onClick={() => setView("closed")}>
+                                        <Tab value={"close_project"} onClick={() => { handleFilterChange('closed'); }}>
                                             <XMarkIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             Close
                                         </Tab>
@@ -376,12 +388,11 @@ export default function Project() {
                             </thead>
                             <tbody>
                                 {projects.data && projects.data.map((value, key) => {
-                                    if (value.status == view || view == "All") {
+                                    if ((value.status == view || view == "All") || (value.start_date > dateFrom && value.start_date < dateTo)) {
                                         const className = `py-3 px-5 ${key === projects.data.length - 1
                                             ? ""
                                             : "border-b border-blue-gray-50"
                                             }`;
-
                                         return (
                                             <tr key={key + value.project_name}>
                                                 <td className={className}>
@@ -461,7 +472,7 @@ export default function Project() {
                                 })}
                             </tbody>
                         </table>
-                        <div className="flex justify-center gap-4 mt-4">
+                        {/* <div className="flex justify-center gap-4 mt-4">
                             {projects.links && projects.links.map((link, index) => (
                                 <Link
                                     key={index}
@@ -473,8 +484,7 @@ export default function Project() {
                                     {link.label}
                                 </Link>
                             ))}
-                            {/* {projects.links()} */}
-                        </div>
+                        </div> */}
                     </CardBody>
                 </Card>
             </AuthenticatedLayout>

@@ -15,6 +15,7 @@ import moment from "moment";
 import EditPlan from "./EditPlan";
 import AddPlan from "./AddPlan";
 import { toast } from "react-toastify";
+import Login from "../Auth/Login";
 
 export default function Plan() {
     const user = usePage().props.auth.user;
@@ -170,11 +171,10 @@ export default function Plan() {
                             </thead>
                             <tbody>
                                 {planData.map((value, key) => {
-                                    const className = `py-3 px-5 ${
-                                        key === planData.length - 1
-                                            ? ""
-                                            : "border-b border-blue-gray-50"
-                                    }`;
+                                    const className = `py-3 px-5 ${key === planData.length - 1
+                                        ? ""
+                                        : "border-b border-blue-gray-50"
+                                        }`;
 
                                     return (
                                         <tr
