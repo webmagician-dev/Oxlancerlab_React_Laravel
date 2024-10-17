@@ -16,30 +16,11 @@ class ProjectController extends Controller
   //
   public function index(Request $request): Response
   {
-    // Get the 'type' parameter from the request
-    $type = $request->input('status', 'all'); // default to 'all' if not specified
 
-    // Base query to get projects based on the filter
     $query = Project::query();
 
-    switch ($type) {
-      case 'open':
-        $query->where('status', 'open');
-        break;
-      case 'finished':
-        $query->where('status', 'finished');
-        break;
-      case 'closed':
-        $query->where('status', 'closed');
-        break;
-      case 'all':
-      default:
-        // No filter, so fetch all projects
-        break;
-    }
-
     // Order by created date and paginate
-    $projects = $query->orderBy('created_at', 'desc')->paginate(30);
+    $projects = $query->orderBy('updated_at', 'desc')->paginate();
 
     // Count project statuses
     $allProjects = Project::all();
@@ -53,27 +34,10 @@ class ProjectController extends Controller
       'openCount' => $openedProjects,
       'closeCount' => $closedProjects,
       'finishCount' => $finishedProjects,
-      'filterType' => $type, // pass the filter type to the frontend
     ]);
   }
   public function store(Request $request)
   {
-    //dd($request);
-    // $request->validate([
-    //     'type' => 'required',
-    //     'project_name' => 'required',
-    //     'your_role' => 'required',
-    //     'your_name' => 'required',
-    //     'your_country' => 'required',
-    //     'client_name' => 'required',
-    //     'client_country' => 'required',
-    //     'budget' => 'required',
-    //     'period' => 'required',
-    //     'period_unit' => 'required',
-    //     'start_date' => 'required',
-    //     'got_from' => 'required',
-    //     'status' => 'required',
-    // ]);
     $project = new Project();
     $project->type = $request->data['type'];
     $project->project_name = $request->data['project_name'];
@@ -88,10 +52,34 @@ class ProjectController extends Controller
     $project->start_date = $request->data['start_date'];
     $project->got_from = $request->data['got_from'];
     $project->status = $request->data['project_status'];
+    $project->user_id = $request->user_id;
 
     $project->save();
-    return Inertia::render('Project/Home', [
-      'project' => $project,
-    ]);
+
+    return back();
+  }
+  public function updata(Request $request)
+  {
+    $data = $request->data;
+
+    //dd($request->data);
+    $project = Project::find($request->id);
+    $project->type = $data['type'];
+    $project->project_name = $data['project_name'];
+    $project->your_name = $data['your_name'];
+    $project->client_name = $data['client_name'];
+    $project->client_country = $data['client_country'];
+    $project->budget = $data['budget'];
+    $project->period = $data['period'];
+    $project->start_date = $data['start_date'];
+    $project->status = $data['project_status'];
+    $project->save();
+
+    //return "12312938471928379";
+  }
+  public function delete(Request $request)
+  {
+    $id = $request->id;
+    Project::where('id', $id)->delete();
   }
 }

@@ -59,10 +59,10 @@ export default function Plan() {
 
     const convertDate = (date) => {
         let dt = new Date(date);
-
         return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
+
     };
-    console.log(dt);
+
 
     useEffect(() => {
         flash &&
