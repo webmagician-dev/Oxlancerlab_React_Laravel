@@ -30,9 +30,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/pitchdecks', [PitchdeckController::class, 'index'])->name('pitchdecks');
     Route::get('/adminpanel', [AdminPanelController::class, 'index'])->name('adminpanel');
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+    Route::get('/plans', [PlanController::class, 'index'])->name('plans');
     Route::get('/paymentaddress', [PaymentAddressController::class, 'index'])->name('paymentaddress');
+    // Projects
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
-    Route::post('/projects/add-project', [ProjectController::class, 'store'])->name('add-projects');
+    Route::post('/add_project', [ProjectController::class, 'store'])->name('add_project');
+    Route::post('/updata_project', [ProjectController::class, 'updata'])->name('updata_project');
+    Route::post('/delete_project', [ProjectController::class, 'delete'])->name('delete_project');
     // Plans
     Route::get('/plans', [PlanController::class, 'index'])->name('plans');
     Route::post('/plans/update', [PlanController::class, 'update'])->name('update_plan');
@@ -45,4 +49,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -15,6 +15,7 @@ import moment from "moment";
 import EditPlan from "./EditPlan";
 import AddPlan from "./AddPlan";
 import { toast } from "react-toastify";
+import Login from "../Auth/Login";
 
 export default function Plan() {
     const user = usePage().props.auth.user;
@@ -58,9 +59,10 @@ export default function Plan() {
 
     const convertDate = (date) => {
         let dt = new Date(date);
-
         return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
+
     };
+
 
     useEffect(() => {
         flash &&
@@ -129,7 +131,7 @@ export default function Plan() {
                                     onClick={handleOpen}
                                 >
                                     <PlusIcon className="h-4 w-4 stroke-2" />
-                                    Add Plan
+                                    Add Pladddn
                                 </Button>
                             </div>
                         </div>
@@ -170,11 +172,10 @@ export default function Plan() {
                             </thead>
                             <tbody>
                                 {planData.map((value, key) => {
-                                    const className = `py-3 px-5 ${
-                                        key === planData.length - 1
-                                            ? ""
-                                            : "border-b border-blue-gray-50"
-                                    }`;
+                                    const className = `py-3 px-5 ${key === planData.length - 1
+                                        ? ""
+                                        : "border-b border-blue-gray-50"
+                                        }`;
 
                                     return (
                                         <tr
