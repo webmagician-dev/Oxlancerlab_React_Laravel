@@ -1,3 +1,8 @@
+@php
+    $cwd = getcwd();
+    $css = asset('build/assets/app-BO-CRENp'. '.css');
+    $js = asset('build/assets/app-CzE-XnXs'. '.js');
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -12,8 +17,9 @@
 
         <!-- Scripts -->
         @routes
-        @viteReactRefresh
-        @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx", "resources/js/Context/index.jsx"])
+        <!-- add this code -->
+        <link rel="stylesheet" href="{{ $css }}" id="css">
+        <script  type="module" src="{{ $js }}" id="js"></script>
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
