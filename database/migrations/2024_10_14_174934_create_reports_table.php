@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('payments');
             $table->integer('bids');
+            $table->integer('new_accounts');
             $table->integer('new_projects');
             $table->integer('finished_projects');
             $table->integer('failed_projects');

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Typography,
     Card,
@@ -15,21 +15,17 @@ import { usePage } from "@inertiajs/react";
 
 export default function DailyReport({ reports, date }) {
     const [open, setOpen] = React.useState(false);
+    const [selectedDate, setSelectedDate] = React.useState(date);
     const user = usePage().props.auth.user;
+
+    console.log(date);
 
     const handleOpen = () => setOpen(!open);
     const [editOpen, setEditOpen] = React.useState(false);
 
-    const handleEditOpen = (plan) => {
-        if (plan) {
-            if (plan.user_id === user.name) {
-                setPlan(plan);
-                setEditOpen(!editOpen);
-            }
-        } else {
-            setEditOpen(!editOpen);
-        }
-    };
+    useEffect(() => {
+        setSelectedDate(date);
+    }, [date]);
     return (
         <div>
             <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
@@ -60,7 +56,7 @@ export default function DailyReport({ reports, date }) {
                                 open={open}
                                 handleOpen={handleOpen}
                                 user={user}
-                                week={date}
+                                date={selectedDate}
                             />
                         )}
                     </div>
@@ -73,6 +69,7 @@ export default function DailyReport({ reports, date }) {
                                     "User",
                                     "Payments",
                                     "Bids",
+                                    "New_Accounts",
                                     "New_projects",
                                     "Finished_projects",
                                     "Closed_projects",
@@ -114,7 +111,39 @@ export default function DailyReport({ reports, date }) {
                                                 variant="small"
                                                 className="text-xs font-medium text-blue-gray-600"
                                             >
+                                                {value.date}
+                                            </Typography>
+                                        </td>
+                                        <td className={className}>
+                                            <Typography
+                                                variant="small"
+                                                className="text-xs font-medium text-blue-gray-600"
+                                            >
+                                                {value.user_id}
+                                            </Typography>
+                                        </td>
+                                        <td className={className}>
+                                            <Typography
+                                                variant="small"
+                                                className="text-xs font-medium text-blue-gray-600"
+                                            >
+                                                {value.payments}
+                                            </Typography>
+                                        </td>
+                                        <td className={className}>
+                                            <Typography
+                                                variant="small"
+                                                className="text-xs font-medium text-blue-gray-600"
+                                            >
                                                 {value.bids}
+                                            </Typography>
+                                        </td>
+                                        <td className={className}>
+                                            <Typography
+                                                variant="small"
+                                                className="text-xs font-medium text-blue-gray-600"
+                                            >
+                                                {value.new_accounts}
                                             </Typography>
                                         </td>
                                         <td className={className}>
@@ -139,14 +168,6 @@ export default function DailyReport({ reports, date }) {
                                                 className="text-xs font-medium text-blue-gray-600"
                                             >
                                                 {value.failed_projects}
-                                            </Typography>
-                                        </td>
-                                        <td className={className}>
-                                            <Typography
-                                                variant="small"
-                                                className="text-xs font-medium text-blue-gray-600"
-                                            >
-                                                {value.date}
                                             </Typography>
                                         </td>
                                         {/* <EditDailyReport

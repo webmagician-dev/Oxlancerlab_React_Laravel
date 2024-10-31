@@ -60,6 +60,13 @@ export default function Report() {
         e.preventDefault();
         setPage(value);
     };
+
+    const convertDate = (date) => {
+        let dt = new Date(date);
+
+        return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
+    };
+
     useEffect(() => {
         setDate(moment());
     }, []);
@@ -162,12 +169,12 @@ export default function Report() {
                     </div>
                 </div>
                 {page === "daily" && (
-                    <DailyReport reports={reports} date={date} />
+                    <DailyReport reports={reports} date={convertDate(date)} />
                 )}
                 {page === "payment" && (
                     <PaymentReport
                         payments_reports={payments_reports}
-                        date={date}
+                        date={convertDate(date)}
                     />
                 )}
             </AuthenticatedLayout>

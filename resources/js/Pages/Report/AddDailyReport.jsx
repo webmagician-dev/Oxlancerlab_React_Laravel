@@ -2,13 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Typography, Button, Input } from "@material-tailwind/react";
 import { router } from "@inertiajs/react";
 
-export default function AddDailyReport({ open, handleOpen, user, date }) {
-    const convertDate = (date) => {
-        let dt = new Date(date);
-
-        return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
-    };
-
+export default function AddDailyReport({ handleOpen, date }) {
     const [data, setData] = useState({
         payments: 0,
         bids: 0,
@@ -21,7 +15,8 @@ export default function AddDailyReport({ open, handleOpen, user, date }) {
 
     const submit = (e) => {
         e.preventDefault();
-        router.post(route("add_plan"), data);
+        console.log("submit data...", data);
+        router.post(route("add_report_daily"), data);
     };
 
     const handleChange = (e) => {
@@ -31,6 +26,18 @@ export default function AddDailyReport({ open, handleOpen, user, date }) {
             [key]: e.target.value,
         });
     };
+
+    useEffect(() => {
+        setData({
+            payments: 0,
+            bids: 0,
+            new_projects: 0,
+            new_accounts: 0,
+            finished_projects: 0,
+            closed_projects: 0,
+            date: date,
+        });
+    }, [date]);
     return (
         <form className="w-full" onSubmit={submit}>
             <div className="flex lg:flex-row flex-col justify-between gap-2">
