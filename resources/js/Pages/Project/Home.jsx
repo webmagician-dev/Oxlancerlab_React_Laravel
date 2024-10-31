@@ -28,7 +28,7 @@ import {
 import moment from "moment";
 import { format } from "date-fns";
 import { DayPicker } from "react-day-picker";
-import { Inertia } from '@inertiajs/inertia';
+import { Inertia } from "@inertiajs/inertia";
 import { usePage, Link, router } from "@inertiajs/react";
 import {
     HomeIcon,
@@ -38,13 +38,15 @@ import {
     ComputerDesktopIcon,
 } from "@heroicons/react/24/solid";
 
-const convertDate = (date) => {
-    let dt = new Date(date);
-    return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate()}`;
-};
+import { convertDate } from "@/Utils/helpers";
 
 export default function Project() {
-    const { projects: temp_projects, openCount, closeCount, finishCount } = usePage().props;
+    const {
+        projects: temp_projects,
+        openCount,
+        closeCount,
+        finishCount,
+    } = usePage().props;
     const user = usePage().props.auth.user;
     const [dateFrom, setDateFrom] = useState(moment().subtract(15, "days"));
     const [dateTo, setDateTo] = useState(moment.now());
@@ -53,22 +55,36 @@ export default function Project() {
 
     const [isOpenUpdate, setIsOpenUpdate] = useState();
 
-    const [view, setView] = useState("All")
+    const [view, setView] = useState("All");
 
     useEffect(() => {
         setProjects(temp_projects);
     }, [temp_projects]);
     const [data, setData] = useState({
-        type: "", project_name: "", your_role: "", your_name: "",
-        your_country: "", client_name: "", client_country: "",
-        budget: "", period: "", period_unit: "", start_date: "",
-        got_from: "", project_status: ""
+        type: "",
+        project_name: "",
+        your_role: "",
+        your_name: "",
+        your_country: "",
+        client_name: "",
+        client_country: "",
+        budget: "",
+        period: "",
+        period_unit: "",
+        start_date: "",
+        got_from: "",
+        project_status: "",
     });
     const [updata, setUpdata] = useState({
-        type: "", project_name: "", your_name: "",
-        client_name: "", client_country: "",
-        budget: "", period: "", start_date: "",
-        project_status: ""
+        type: "",
+        project_name: "",
+        your_name: "",
+        client_name: "",
+        client_country: "",
+        budget: "",
+        period: "",
+        start_date: "",
+        project_status: "",
     });
 
     const handleOpen = () => setOpen(!open);
@@ -90,33 +106,41 @@ export default function Project() {
     }
 
     const saveProject = async (e) => {
-        router.post(route("add_project"), {
-            user_id: user.id,
-            data: data
-        }, {
-            onSuccess: () => window.location.reload(),
-            onError: (errors) => console.error('Validation failed:', errors),
-        });
-
-    }
+        router.post(
+            route("add_project"),
+            {
+                user_id: user.id,
+                data: data,
+            },
+            {
+                onSuccess: () => window.location.reload(),
+                onError: (errors) =>
+                    console.error("Validation failed:", errors),
+            }
+        );
+    };
 
     const updateProject = async (id) => {
-        router.post(route("updata_project"), {
-            id: id,
-            user_id: user.id,
-            data: updata
-        }, {
-            onSuccess: () => alert('Project updataed successfully!'),
-            onError: (errors) => console.error('Validation failed:', errors),
-        });
+        router.post(
+            route("updata_project"),
+            {
+                id: id,
+                user_id: user.id,
+                data: updata,
+            },
+            {
+                onSuccess: () => alert("Project updataed successfully!"),
+                onError: (errors) =>
+                    console.error("Validation failed:", errors),
+            }
+        );
         setIsOpenUpdate("");
-
-    }
+    };
     const deleteProject = async (id) => {
         router.post(route("delete_project"), {
             id: id,
         });
-    }
+    };
 
     return (
         <>
@@ -320,19 +344,31 @@ export default function Project() {
                             <div className="w-96">
                                 <Tabs value="all">
                                     <TabsHeader>
-                                        <Tab value="all" onClick={() => setView("All")}>
+                                        <Tab
+                                            value="all"
+                                            onClick={() => setView("All")}
+                                        >
                                             <HomeIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             All
                                         </Tab>
-                                        <Tab value={"open_project"} onClick={() => setView("open")} >
+                                        <Tab
+                                            value={"open_project"}
+                                            onClick={() => setView("open")}
+                                        >
                                             <ComputerDesktopIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             Open
                                         </Tab>
-                                        <Tab value={"finish_project"} onClick={() => setView("finished")}  >
+                                        <Tab
+                                            value={"finish_project"}
+                                            onClick={() => setView("finished")}
+                                        >
                                             <CheckIcon className="-mt-0.5 mr-2 inline-block h-5 w-5" />
                                             Finish
                                         </Tab>
-                                        <Tab value={"close_project"} onClick={() => setView("closed")}>
+                                        <Tab
+                                            value={"close_project"}
+                                            onClick={() => setView("closed")}
+                                        >
                                             <XMarkIcon className="-mt-1 mr-2 inline-block h-5 w-5" />
                                             Close
                                         </Tab>
@@ -390,223 +426,381 @@ export default function Project() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {projects.data && projects.data.map((value, key) => {
-                                    if ((value.status == view || view == "All") && (value.start_date >= convertDate(dateFrom) && value.start_date <= convertDate(dateTo))) {
-                                        const className = `py-3 px-4 ${key === projects.data.length - 1
-                                            ? ""
-                                            : "border-b border-blue-gray-50"
+                                {projects.data &&
+                                    projects.data.map((value, key) => {
+                                        if (
+                                            (value.status == view ||
+                                                view == "All") &&
+                                            value.start_date >=
+                                                convertDate(dateFrom) &&
+                                            value.start_date <=
+                                                convertDate(dateTo)
+                                        ) {
+                                            const className = `py-3 px-4 ${
+                                                key === projects.data.length - 1
+                                                    ? ""
+                                                    : "border-b border-blue-gray-50"
                                             }`;
-                                        return (
-                                            <>
-                                                {
-                                                    isOpenUpdate === value.id ? <tr key={key + value.project_name}>
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center w-fit">
-                                                                <input
-                                                                    className=" rounded-md px-2 w-fit text-xs max-w-full"
-                                                                    type="text"
-                                                                    name="type"
-                                                                    onChange={handleUpdata}
-
-                                                                    value={updata.type}
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-xs font-medium text-blue-gray-600 ">
-                                                            <div className="flex items-center w-fit">
-                                                                <input
-                                                                    className=" rounded-md px-2 w-fit text-xs max-w-full"
-                                                                    type="text"
-                                                                    name="project_name"
-                                                                    onChange={handleUpdata}
-
-                                                                    value={updata.project_name}
-                                                                />
-                                                            </div>
-                                                        </td >
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center w-fit">
-                                                                <input
-                                                                    className=" rounded-md px-2 w-fit text-xs max-w-[90px]"
-                                                                    type="text"
-                                                                    name="your_name"
-                                                                    onChange={handleUpdata}
-
-                                                                    value={updata.your_name} />
-                                                            </div>
-                                                        </td>
-
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center w-fit">
-                                                                <input
-                                                                    className=" rounded-md px-2 w-fit text-xs max-w-full"
-                                                                    type="text"
-                                                                    name="client_name"
-                                                                    onChange={handleUpdata}
-
-                                                                    value={updata.client_name} />
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center w-fit">
-                                                                <input
-                                                                    className=" rounded-md px-2 w-fit text-xs max-w-full"
-                                                                    type="text"
-                                                                    name="client_country"
-                                                                    onChange={handleUpdata}
-
-                                                                    value={updata.client_country} />
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center w-fit">
-                                                                <input
-                                                                    className=" rounded-md px-2 w-fit text-xs max-w-[90px]"
-                                                                    type="text"
-                                                                    name="budget"
-                                                                    onChange={handleUpdata}
-
-                                                                    value={updata.budget} />
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center w-fit">
-                                                                <input
-                                                                    className=" rounded-md px-2 w-fit text-xs max-w-[90px]"
-                                                                    type="text"
-                                                                    name="start_date"
-                                                                    onChange={handleUpdata}
-
-                                                                    value={updata.start_date} />
-                                                            </div>
-                                                        </td>
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center w-fit">
-                                                                <input
-                                                                    className=" rounded-md px-2 w-fit text-xs max-w-[90px]"
-                                                                    type="text"
-                                                                    name="period"
-                                                                    onChange={handleUpdata}
-
-                                                                    value={updata.period} />
-                                                            </div>
-                                                        </td >
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center w-fit max-w-[500px]" >
-                                                                <Select size="sm" onChange={(e) => {
-                                                                    const data = {
-                                                                        target: {
-                                                                            name: 'project_status',
-                                                                            value: e
-                                                                        }
-                                                                    }
-                                                                    //console.log(data);
-                                                                    handleUpdata(data)
-                                                                }}>
-                                                                    <Option value="Open" name="type">
-                                                                        Open
-                                                                    </Option>
-                                                                    <Option value="Finished" name="type">
-                                                                        Finished
-                                                                    </Option>
-                                                                    <Option value="Closed" name="type">
-                                                                        Closed
-                                                                    </Option>
-                                                                </Select>
-                                                            </div >
-                                                        </td >
-                                                        <td className="text-xs font-medium text-blue-gray-600">
-                                                            <div className="flex items-center gap-2" >
-                                                                <Button size="sm" color="success" onClick={() => { updateProject(value.id) }}>Save</Button>
-                                                                <Button size="sm" color="warn" onClick={() => { setIsOpenUpdate('') }}>Cancel</Button>
-                                                            </div >
-                                                        </td >
-
-                                                    </tr > : <tr key={key + value.project_name}>
-                                                        <td className={className}>
-                                                            <div className="flex items-center gap-4">
-                                                                <Typography
-                                                                    color="blue-gray"
-                                                                    className="font-bold"
-                                                                >
-                                                                    {value.type}
-                                                                </Typography>
-                                                            </div>
-                                                        </td>
-                                                        <td className={className}>
-                                                            <Typography className="text-xs font-medium text-blue-gray-600">
-                                                                {value.project_name}
-                                                            </Typography>
-                                                        </td>
-                                                        <td className={className}>
-                                                            <Typography className="text-xs font-medium text-blue-gray-600">
-                                                                {value.your_name}
-                                                            </Typography>
-                                                        </td>
-                                                        <td className={className}>
-                                                            <Typography className="text-xs font-medium text-blue-gray-600">
-                                                                {value.client_name}
-                                                            </Typography>
-                                                        </td>
-                                                        <td className={className}>
-                                                            <Typography className="text-xs font-medium text-blue-gray-600">
-                                                                {value.client_country}
-                                                            </Typography>
-                                                        </td>
-                                                        <td className={className}>
-                                                            <Typography className="text-xs font-medium text-blue-gray-600">
-                                                                {value.budget}
-                                                            </Typography>
-                                                        </td>
-                                                        <td className={className}>
-                                                            <Typography className="text-xs font-medium text-blue-gray-600">
-                                                                {value.start_date}
-                                                            </Typography>
-                                                        </td>
-                                                        <td className={className}>
-                                                            <Typography className="text-xs font-medium text-blue-gray-600">
-                                                                {value.got_from}
-                                                            </Typography>
-                                                        </td>
-                                                        <td className={className}>
-                                                            {value.status === "open" ? (
-                                                                <Chip
-                                                                    color="blue"
-                                                                    value="Working"
-                                                                />
-                                                            ) : value.status ===
-                                                                "finished" ? (
-                                                                <Chip
-                                                                    color="green"
-                                                                    value="Finished"
-                                                                />
-                                                            ) : (
-                                                                <Chip
-                                                                    color="red"
-                                                                    value="Closed"
-                                                                />
-                                                            )}
-
-                                                        </td>
-                                                        <td className="py-3 pr-5">
-                                                            {value.user_id === user.id && <>
-                                                                <div className="flex items-center gap-1" >
-                                                                    <Button size="sm" onClick={() => updata_fun(value)}>Updata</Button>
-                                                                    <Button size="sm" onClick={() => deleteProject(value.id)} >Delete</Button>
-                                                                </div >
-                                                            </>
+                                            return (
+                                                <>
+                                                    {isOpenUpdate ===
+                                                    value.id ? (
+                                                        <tr
+                                                            key={
+                                                                key +
+                                                                value.project_name
                                                             }
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </>
+                                                        >
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center w-fit">
+                                                                    <input
+                                                                        className=" rounded-md px-2 w-fit text-xs max-w-full"
+                                                                        type="text"
+                                                                        name="type"
+                                                                        onChange={
+                                                                            handleUpdata
+                                                                        }
+                                                                        value={
+                                                                            updata.type
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-xs font-medium text-blue-gray-600 ">
+                                                                <div className="flex items-center w-fit">
+                                                                    <input
+                                                                        className=" rounded-md px-2 w-fit text-xs max-w-full"
+                                                                        type="text"
+                                                                        name="project_name"
+                                                                        onChange={
+                                                                            handleUpdata
+                                                                        }
+                                                                        value={
+                                                                            updata.project_name
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center w-fit">
+                                                                    <input
+                                                                        className=" rounded-md px-2 w-fit text-xs max-w-[90px]"
+                                                                        type="text"
+                                                                        name="your_name"
+                                                                        onChange={
+                                                                            handleUpdata
+                                                                        }
+                                                                        value={
+                                                                            updata.your_name
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
 
-                                        );
-                                    }
-
-                                })}
-                            </tbody >
-                        </table >
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center w-fit">
+                                                                    <input
+                                                                        className=" rounded-md px-2 w-fit text-xs max-w-full"
+                                                                        type="text"
+                                                                        name="client_name"
+                                                                        onChange={
+                                                                            handleUpdata
+                                                                        }
+                                                                        value={
+                                                                            updata.client_name
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center w-fit">
+                                                                    <input
+                                                                        className=" rounded-md px-2 w-fit text-xs max-w-full"
+                                                                        type="text"
+                                                                        name="client_country"
+                                                                        onChange={
+                                                                            handleUpdata
+                                                                        }
+                                                                        value={
+                                                                            updata.client_country
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center w-fit">
+                                                                    <input
+                                                                        className=" rounded-md px-2 w-fit text-xs max-w-[90px]"
+                                                                        type="text"
+                                                                        name="budget"
+                                                                        onChange={
+                                                                            handleUpdata
+                                                                        }
+                                                                        value={
+                                                                            updata.budget
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center w-fit">
+                                                                    <input
+                                                                        className=" rounded-md px-2 w-fit text-xs max-w-[90px]"
+                                                                        type="text"
+                                                                        name="start_date"
+                                                                        onChange={
+                                                                            handleUpdata
+                                                                        }
+                                                                        value={
+                                                                            updata.start_date
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center w-fit">
+                                                                    <input
+                                                                        className=" rounded-md px-2 w-fit text-xs max-w-[90px]"
+                                                                        type="text"
+                                                                        name="period"
+                                                                        onChange={
+                                                                            handleUpdata
+                                                                        }
+                                                                        value={
+                                                                            updata.period
+                                                                        }
+                                                                    />
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center w-fit max-w-[500px]">
+                                                                    <Select
+                                                                        size="sm"
+                                                                        onChange={(
+                                                                            e
+                                                                        ) => {
+                                                                            const data =
+                                                                                {
+                                                                                    target: {
+                                                                                        name: "project_status",
+                                                                                        value: e,
+                                                                                    },
+                                                                                };
+                                                                            //console.log(data);
+                                                                            handleUpdata(
+                                                                                data
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <Option
+                                                                            value="Open"
+                                                                            name="type"
+                                                                        >
+                                                                            Open
+                                                                        </Option>
+                                                                        <Option
+                                                                            value="Finished"
+                                                                            name="type"
+                                                                        >
+                                                                            Finished
+                                                                        </Option>
+                                                                        <Option
+                                                                            value="Closed"
+                                                                            name="type"
+                                                                        >
+                                                                            Closed
+                                                                        </Option>
+                                                                    </Select>
+                                                                </div>
+                                                            </td>
+                                                            <td className="text-xs font-medium text-blue-gray-600">
+                                                                <div className="flex items-center gap-2">
+                                                                    <Button
+                                                                        size="sm"
+                                                                        color="success"
+                                                                        onClick={() => {
+                                                                            updateProject(
+                                                                                value.id
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        Save
+                                                                    </Button>
+                                                                    <Button
+                                                                        size="sm"
+                                                                        color="warn"
+                                                                        onClick={() => {
+                                                                            setIsOpenUpdate(
+                                                                                ""
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        Cancel
+                                                                    </Button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    ) : (
+                                                        <tr
+                                                            key={
+                                                                key +
+                                                                value.project_name
+                                                            }
+                                                        >
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                <div className="flex items-center gap-4">
+                                                                    <Typography
+                                                                        color="blue-gray"
+                                                                        className="font-bold"
+                                                                    >
+                                                                        {
+                                                                            value.type
+                                                                        }
+                                                                    </Typography>
+                                                                </div>
+                                                            </td>
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                <Typography className="text-xs font-medium text-blue-gray-600">
+                                                                    {
+                                                                        value.project_name
+                                                                    }
+                                                                </Typography>
+                                                            </td>
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                <Typography className="text-xs font-medium text-blue-gray-600">
+                                                                    {
+                                                                        value.your_name
+                                                                    }
+                                                                </Typography>
+                                                            </td>
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                <Typography className="text-xs font-medium text-blue-gray-600">
+                                                                    {
+                                                                        value.client_name
+                                                                    }
+                                                                </Typography>
+                                                            </td>
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                <Typography className="text-xs font-medium text-blue-gray-600">
+                                                                    {
+                                                                        value.client_country
+                                                                    }
+                                                                </Typography>
+                                                            </td>
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                <Typography className="text-xs font-medium text-blue-gray-600">
+                                                                    {
+                                                                        value.budget
+                                                                    }
+                                                                </Typography>
+                                                            </td>
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                <Typography className="text-xs font-medium text-blue-gray-600">
+                                                                    {
+                                                                        value.start_date
+                                                                    }
+                                                                </Typography>
+                                                            </td>
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                <Typography className="text-xs font-medium text-blue-gray-600">
+                                                                    {
+                                                                        value.got_from
+                                                                    }
+                                                                </Typography>
+                                                            </td>
+                                                            <td
+                                                                className={
+                                                                    className
+                                                                }
+                                                            >
+                                                                {value.status ===
+                                                                "open" ? (
+                                                                    <Chip
+                                                                        color="blue"
+                                                                        value="Working"
+                                                                    />
+                                                                ) : value.status ===
+                                                                  "finished" ? (
+                                                                    <Chip
+                                                                        color="green"
+                                                                        value="Finished"
+                                                                    />
+                                                                ) : (
+                                                                    <Chip
+                                                                        color="red"
+                                                                        value="Closed"
+                                                                    />
+                                                                )}
+                                                            </td>
+                                                            <td className="py-3 pr-5">
+                                                                {value.user_id ===
+                                                                    user.id && (
+                                                                    <>
+                                                                        <div className="flex items-center gap-1">
+                                                                            <Button
+                                                                                size="sm"
+                                                                                onClick={() =>
+                                                                                    updata_fun(
+                                                                                        value
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                Updata
+                                                                            </Button>
+                                                                            <Button
+                                                                                size="sm"
+                                                                                onClick={() =>
+                                                                                    deleteProject(
+                                                                                        value.id
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                Delete
+                                                                            </Button>
+                                                                        </div>
+                                                                    </>
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </>
+                                            );
+                                        }
+                                    })}
+                            </tbody>
+                        </table>
                         {/* <div className="flex justify-center gap-4 mt-4">
                             {projects.links && projects.links.map((link, index) => (
                                 <Link
@@ -620,9 +814,9 @@ export default function Project() {
                                 </Link>
                             ))}
                         </div> */}
-                    </CardBody >
-                </Card >
-            </AuthenticatedLayout >
+                    </CardBody>
+                </Card>
+            </AuthenticatedLayout>
             <Dialog
                 open={open}
                 handler={handleOpen}
@@ -641,16 +835,19 @@ export default function Project() {
                                         Type
                                     </Typography>
 
-                                    <Select size="md" onChange={(e) => {
-                                        const data = {
-                                            target: {
-                                                name: 'type',
-                                                value: e
-                                            }
-                                        }
-                                        //console.log(data);
-                                        handleInput(data)
-                                    }}>
+                                    <Select
+                                        size="md"
+                                        onChange={(e) => {
+                                            const data = {
+                                                target: {
+                                                    name: "type",
+                                                    value: e,
+                                                },
+                                            };
+                                            //console.log(data);
+                                            handleInput(data);
+                                        }}
+                                    >
                                         <Option value="contract" name="type">
                                             Contract
                                         </Option>
@@ -660,8 +857,12 @@ export default function Project() {
                                         <Option value="internship" name="type">
                                             Internship
                                         </Option>
-                                        <Option value="project" name="type">Project</Option>
-                                        <Option value="task" name="type">Task</Option>
+                                        <Option value="project" name="type">
+                                            Project
+                                        </Option>
+                                        <Option value="task" name="type">
+                                            Task
+                                        </Option>
                                     </Select>
                                 </div>
                                 <div>
@@ -781,16 +982,19 @@ export default function Project() {
                                         period_unit
                                     </Typography>
 
-                                    <Select size="md" onChange={(e) => {
-                                        const data = {
-                                            target: {
-                                                name: 'period_unit',
-                                                value: e
-                                            }
-                                        }
-                                        //console.log(data);
-                                        handleInput(data)
-                                    }}>
+                                    <Select
+                                        size="md"
+                                        onChange={(e) => {
+                                            const data = {
+                                                target: {
+                                                    name: "period_unit",
+                                                    value: e,
+                                                },
+                                            };
+                                            //console.log(data);
+                                            handleInput(data);
+                                        }}
+                                    >
                                         <Option value="min" name="type">
                                             Min
                                         </Option>
@@ -800,8 +1004,12 @@ export default function Project() {
                                         <Option value="day" name="type">
                                             Day
                                         </Option>
-                                        <Option value="month" name="type">Month</Option>
-                                        <Option value="year" name="type">Year</Option>
+                                        <Option value="month" name="type">
+                                            Month
+                                        </Option>
+                                        <Option value="year" name="type">
+                                            Year
+                                        </Option>
                                     </Select>
                                 </div>
                                 <div>
@@ -841,16 +1049,19 @@ export default function Project() {
                                         Status
                                     </Typography>
 
-                                    <Select size="md" onChange={(e) => {
-                                        const data = {
-                                            target: {
-                                                name: 'project_status',
-                                                value: e
-                                            }
-                                        }
-                                        //console.log(data);
-                                        handleInput(data)
-                                    }}>
+                                    <Select
+                                        size="md"
+                                        onChange={(e) => {
+                                            const data = {
+                                                target: {
+                                                    name: "project_status",
+                                                    value: e,
+                                                },
+                                            };
+                                            //console.log(data);
+                                            handleInput(data);
+                                        }}
+                                    >
                                         <Option value="Open" name="type">
                                             Open
                                         </Option>

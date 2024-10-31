@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Button, Input } from "@material-tailwind/react";
 import { router } from "@inertiajs/react";
+import { convertDate } from "@/Utils/helpers";
 
 export default function AddPlan({ open, handleOpen, user, week }) {
-    const convertDate = (date) => {
-        let dt = new Date(date);
-
-        return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
-    };
-
     const [data, setData] = useState({
         payments: 0,
         bids: 0,

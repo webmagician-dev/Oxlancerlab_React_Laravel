@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
 
     // Reports - Daily Report
     Route::post('/report_daily/create', [ReportController::class, 'store'])->name('add_report_daily');
+    Route::post('/report_daily/update', [ReportController::class, 'update'])->name('update_report_daily');
 
 });
 

@@ -28,7 +28,8 @@ class ReportController extends Controller
         $report->new_projects = $request->input("new_projects");
         $report->bids = $request->input("bids");
         $report->new_accounts = $request->input("new_accounts");
-        $report->study = $request->input("study");
+        $report->finished_projects = $request->input("finished_projects");
+        $report->failed_projects = $request->input("failed_projects");
         $report->save();
 
         return back();

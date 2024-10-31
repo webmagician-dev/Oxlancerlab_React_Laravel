@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Typography,
     Card,
@@ -12,20 +12,51 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import AddDailyReport from "./AddDailyReport";
 import EditDailyReport from "./EditDailyReport";
 import { usePage } from "@inertiajs/react";
+import { compareDates } from "@/Utils/helpers";
 
 export default function DailyReport({ reports, date }) {
-    const [open, setOpen] = React.useState(false);
-    const [selectedDate, setSelectedDate] = React.useState(date);
+    const [open, setOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(date);
+    const [report, setReport] = useState();
+    const [reportData, setReportData] = useState(reports);
+
     const user = usePage().props.auth.user;
 
-    console.log(date);
-
     const handleOpen = () => setOpen(!open);
-    const [editOpen, setEditOpen] = React.useState(false);
+    const [editOpen, setEditOpen] = useState(false);
+
+    const [values, setValues] = useState({
+        id: " ",
+        payments: 0,
+        bids: 0,
+        new_projects: 0,
+        new_accounts: 0,
+        finished_projects: 0,
+        failed_projects: 0,
+    });
+
+    const handleEditOpen = (report) => {
+        if (report) {
+            if (report.user_id === user.name) {
+                setReport(report);
+                setEditOpen(!editOpen);
+            }
+        } else {
+            setEditOpen(!editOpen);
+        }
+    };
 
     useEffect(() => {
-        setSelectedDate(date);
-    }, [date]);
+        if (reports && date) {
+            setSelectedDate(date);
+
+            const filtered = reports.filter((report) => {
+                return compareDates(report.date, date);
+            });
+
+            setReportData(filtered);
+        }
+    }, [date, reports]);
     return (
         <div>
             <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
@@ -89,7 +120,7 @@ export default function DailyReport({ reports, date }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {reports.map((value, key) => {
+                            {reportData.map((value, key) => {
                                 const className = `py-3 px-5 ${
                                     key === reports.length - 1
                                         ? ""
@@ -97,7 +128,11 @@ export default function DailyReport({ reports, date }) {
                                 }`;
 
                                 return (
-                                    <tr key={key}>
+                                    <tr
+                                        key={key}
+                                        onClick={() => handleEditOpen(value)}
+                                        className="cursor-pointer"
+                                    >
                                         <td className={className}>
                                             <Typography
                                                 variant="small"
@@ -170,11 +205,6 @@ export default function DailyReport({ reports, date }) {
                                                 {value.failed_projects}
                                             </Typography>
                                         </td>
-                                        {/* <EditDailyReport
-                                            open={editOpen}
-                                            handleOpen={handleEditOpen}
-                                            plan={value}
-                                        /> */}
                                     </tr>
                                 );
                             })}
@@ -182,6 +212,13 @@ export default function DailyReport({ reports, date }) {
                     </table>
                 </CardBody>
             </Card>
+            <EditDailyReport
+                open={editOpen}
+                handleOpen={setEditOpen}
+                report={report}
+                values={values}
+                setValues={setValues}
+            />
         </div>
     );
 }

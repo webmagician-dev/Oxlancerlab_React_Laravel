@@ -11,10 +11,10 @@ import {
 import { usePage } from "@inertiajs/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { HonestWeekPicker } from "@/Components/HonestWeekPicker";
-import moment from "moment";
 import EditPlan from "./EditPlan";
 import AddPlan from "./AddPlan";
 import { toast } from "react-toastify";
+import { compareDates, convertDate } from "@/Utils/helpers";
 
 export default function Plan() {
     const user = usePage().props.auth.user;
@@ -56,11 +56,6 @@ export default function Plan() {
         setWeek(week);
     };
 
-    const convertDate = (date) => {
-        let dt = new Date(date);
-        return moment(dt).format("YYYY-MM-DD");
-    };
-
     useEffect(() => {
         flash &&
             flash.message &&
@@ -68,15 +63,6 @@ export default function Plan() {
                 position: "bottom-right",
             });
     }, [flash]);
-
-    function compareDates(dateStr1, dateStr2) {
-        // Create Date objects from the date strings
-        const date1 = new Date(dateStr1);
-        const date2 = new Date(dateStr2);
-
-        // Compare the dates using getTime()method
-        return date1.getTime() === date2.getTime();
-    }
 
     useEffect(() => {
         if (plans && week) {

@@ -46,6 +46,7 @@ import EditDailyReport from "./EditDailyReport";
 import DailyReport from "./DailyReport";
 import PaymentReport from "./PaymentReport";
 import moment from "moment";
+import { convertDate } from "@/Utils/helpers";
 
 export default function Report() {
     const reports = usePage().props.reports;
@@ -59,12 +60,6 @@ export default function Report() {
     const handleTabClick = (e, value) => {
         e.preventDefault();
         setPage(value);
-    };
-
-    const convertDate = (date) => {
-        let dt = new Date(date);
-
-        return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
     };
 
     useEffect(() => {

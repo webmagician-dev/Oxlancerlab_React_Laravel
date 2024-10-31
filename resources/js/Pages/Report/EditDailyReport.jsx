@@ -13,30 +13,31 @@ import { router } from "@inertiajs/react";
 export default function EditDailyReport({
     open,
     handleOpen,
-    plan,
+    report,
     values,
     setValues,
 }) {
     const submit = (e) => {
         e.preventDefault();
         console.log(values);
-        router.post(route("update_plan"), values);
+        router.post(route("update_report_daily"), values);
         handleOpen(false);
     };
 
     useEffect(() => {
-        plan &&
-            plan.id &&
+        report &&
+            report.id &&
             setValues({
                 ...values,
-                id: plan?.id,
-                payments: plan?.payments,
-                new_projects: plan?.new_projects,
-                new_accounts: plan?.new_accounts,
-                bids: plan?.bids,
-                study: plan?.study,
+                id: report?.id,
+                payments: report?.payments,
+                new_projects: report?.new_projects,
+                new_accounts: report?.new_accounts,
+                finished_projects: report?.finished_projects,
+                failed_projects: report?.failed_projects,
+                bids: report?.bids,
             });
-    }, [plan]);
+    }, [report]);
 
     return (
         <Dialog
@@ -63,7 +64,7 @@ export default function EditDailyReport({
                                             "before:content-none after:content-none",
                                     }}
                                     type="number"
-                                    value={values.payments}
+                                    value={values?.payments}
                                     onChange={(e) =>
                                         setValues({
                                             ...values,
@@ -84,7 +85,7 @@ export default function EditDailyReport({
                                         className:
                                             "before:content-none after:content-none",
                                     }}
-                                    value={values.new_projects}
+                                    value={values?.new_projects}
                                     onChange={(e) =>
                                         setValues({
                                             ...values,
@@ -104,7 +105,7 @@ export default function EditDailyReport({
                                             "before:content-none after:content-none",
                                     }}
                                     type="number"
-                                    value={values.bids}
+                                    value={values?.bids}
                                     onChange={(e) =>
                                         setValues({
                                             ...values,
@@ -125,7 +126,7 @@ export default function EditDailyReport({
                                             "before:content-none after:content-none",
                                     }}
                                     type="number"
-                                    value={values.new_accounts}
+                                    value={values?.new_accounts}
                                     onChange={(e) =>
                                         setValues({
                                             ...values,
@@ -136,7 +137,7 @@ export default function EditDailyReport({
                             </div>
                             <div>
                                 <Typography variant="h6" color="blue-gray">
-                                    Study
+                                    Finished Project
                                 </Typography>
                                 <Input
                                     className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
@@ -144,11 +145,30 @@ export default function EditDailyReport({
                                         className:
                                             "before:content-none after:content-none",
                                     }}
-                                    value={values.study}
+                                    value={values?.finished_projects}
                                     onChange={(e) =>
                                         setValues({
                                             ...values,
-                                            study: e.target.value,
+                                            finished_projects: e.target.value,
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <Typography variant="h6" color="blue-gray">
+                                    Closed Project
+                                </Typography>
+                                <Input
+                                    className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
+                                    labelProps={{
+                                        className:
+                                            "before:content-none after:content-none",
+                                    }}
+                                    value={values?.failed_projects}
+                                    onChange={(e) =>
+                                        setValues({
+                                            ...values,
+                                            failed_projects: e.target.value,
                                         })
                                     }
                                 />
