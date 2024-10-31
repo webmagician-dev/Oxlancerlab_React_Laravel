@@ -109,7 +109,7 @@ export default function Project() {
         router.post(
             route("add_project"),
             {
-                user_id: user.id,
+                user_id: user.name,
                 data: data,
             },
             {
@@ -125,7 +125,7 @@ export default function Project() {
             route("updata_project"),
             {
                 id: id,
-                user_id: user.id,
+                user_id: user.name,
                 data: updata,
             },
             {
@@ -766,7 +766,7 @@ export default function Project() {
                                                             </td>
                                                             <td className="py-3 pr-5">
                                                                 {value.user_id ===
-                                                                    user.id && (
+                                                                    user.name && (
                                                                     <>
                                                                         <div className="flex items-center gap-1">
                                                                             <Button
@@ -879,6 +879,22 @@ export default function Project() {
                                         name="project_name"
                                         onChange={handleInput}
                                         value={data.project_name}
+                                    />
+                                </div>
+                                <div>
+                                    <Typography variant="h6" color="blue-gray">
+                                        your_role
+                                    </Typography>
+                                    <Input
+                                        className=" !border-t-blue-gray-200 focus:!border-t-gray-900 min-w-[100px!important]"
+                                        labelProps={{
+                                            className:
+                                                "before:content-none after:content-none",
+                                        }}
+                                        type="text"
+                                        name="your_role"
+                                        onChange={handleInput}
+                                        value={data.your_role}
                                     />
                                 </div>
                                 <div>
@@ -1022,7 +1038,7 @@ export default function Project() {
                                             className:
                                                 "before:content-none after:content-none",
                                         }}
-                                        type="text"
+                                        type="date"
                                         name="start_date"
                                         onChange={handleInput}
                                         value={data.start_date}
@@ -1052,13 +1068,6 @@ export default function Project() {
                                     <Select
                                         size="md"
                                         onChange={(e) => {
-                                            const data = {
-                                                target: {
-                                                    name: "project_status",
-                                                    value: e,
-                                                },
-                                            };
-                                            //console.log(data);
                                             handleInput(data);
                                         }}
                                     >

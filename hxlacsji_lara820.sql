@@ -160,14 +160,14 @@ DROP TABLE IF EXISTS `payments_reports`;
 CREATE TABLE `payments_reports` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `amount` int(11) NOT NULL,
-  `project` int(11) NOT NULL,
-  `txHash` int(11) NOT NULL,
+  `project` varchar(255) NOT NULL,
+  `txHash` varchar(255) NOT NULL,
   `user_id` varchar(255) NOT NULL,
   `date` date NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Table structure for table `plans` */
 
@@ -187,7 +187,7 @@ CREATE TABLE `plans` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Table structure for table `projects` */
 
@@ -207,12 +207,12 @@ CREATE TABLE `projects` (
   `period_unit` enum('min','hour','day','month','year') NOT NULL,
   `start_date` date DEFAULT NULL,
   `got_from` varchar(255) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
   `status` enum('open','finished','closed') DEFAULT 'open',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Table structure for table `reports` */
 
@@ -220,17 +220,18 @@ DROP TABLE IF EXISTS `reports`;
 
 CREATE TABLE `reports` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `payments` int(11) NOT NULL,
-  `bids` int(11) NOT NULL,
-  `new_projects` int(11) NOT NULL,
-  `finished_projects` int(11) NOT NULL,
-  `failed_projects` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `payments` int(11) DEFAULT NULL,
+  `bids` int(11) DEFAULT NULL,
+  `new_accounts` int(11) DEFAULT NULL,
+  `new_projects` int(11) DEFAULT NULL,
+  `finished_projects` int(11) DEFAULT NULL,
+  `failed_projects` int(11) DEFAULT NULL,
+  `user_id` varchar(255) NOT NULL,
   `date` date NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Table structure for table `sessions` */
 

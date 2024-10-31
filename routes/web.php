@@ -46,6 +46,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/report_daily/create', [ReportController::class, 'store'])->name('add_report_daily');
     Route::post('/report_daily/update', [ReportController::class, 'update'])->name('update_report_daily');
 
+    // Reports - Payment Report
+    Route::post('/report_payment/create', [ReportController::class, 'add_payment'])->name('add_report_payment');
+    // add_report_payment
+
 });
 
 Route::middleware('auth')->group(function () {

@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('payments_reports', function (Blueprint $table) {
             $table->id();
             $table->integer('amount');
-            $table->integer('project');
+            $table->string('project');
             $table->integer('txHash');
             $table->string('user_id');
             $table->date('date');

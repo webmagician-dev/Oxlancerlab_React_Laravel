@@ -34,15 +34,8 @@ import { format } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import { usePage } from "@inertiajs/react";
 
-import {
-    PlusIcon,
-    HomeIcon,
-    CalendarIcon,
-    CurrencyDollarIcon,
-} from "@heroicons/react/24/solid";
+import { CalendarIcon, CurrencyDollarIcon } from "@heroicons/react/24/solid";
 
-import AddDailyReport from "./AddDailyReport";
-import EditDailyReport from "./EditDailyReport";
 import DailyReport from "./DailyReport";
 import PaymentReport from "./PaymentReport";
 import moment from "moment";
@@ -51,8 +44,11 @@ import { convertDate } from "@/Utils/helpers";
 export default function Report() {
     const reports = usePage().props.reports;
     const payments_reports = usePage().props.payments_reports;
+    const my_projects = usePage().props.my_projects;
     const [date, setDate] = useState();
     const [page, setPage] = useState("daily");
+
+    console.log(my_projects);
 
     const [open, setOpen] = React.useState(false);
 
@@ -170,6 +166,7 @@ export default function Report() {
                     <PaymentReport
                         payments_reports={payments_reports}
                         date={convertDate(date)}
+                        my_projects={my_projects}
                     />
                 )}
             </AuthenticatedLayout>

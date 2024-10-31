@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     Typography,
     Card,
@@ -39,11 +39,30 @@ import {
     CalendarIcon,
     CurrencyDollarIcon,
 } from "@heroicons/react/24/solid";
+import AddPaymentReport from "./AddPaymentReport";
+import { compareDates } from "@/Utils/helpers";
 
-export default function PaymentReport({ payments_reports }) {
+export default function PaymentReport({ payments_reports, date, my_projects }) {
     const [open, setOpen] = React.useState(false);
 
+    const [selectedDate, setSelectedDate] = useState(date);
+    const [reportData, setReportData] = useState(payments_reports);
+
+    const user = usePage().props.auth.user;
+
     const handleOpen = () => setOpen(!open);
+
+    useEffect(() => {
+        if (payments_reports && date) {
+            setSelectedDate(date);
+
+            const filtered = payments_reports.filter((report) => {
+                return compareDates(report.date, date);
+            });
+
+            setReportData(filtered);
+        }
+    }, [date, payments_reports]);
 
     return (
         <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
@@ -64,16 +83,27 @@ export default function PaymentReport({ payments_reports }) {
                 </Button>
             </CardHeader>
             <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+                <div className={open ? "block p-2" : "hidden p-2"}>
+                    {open && (
+                        <AddPaymentReport
+                            open={open}
+                            handleOpen={handleOpen}
+                            user={user}
+                            date={selectedDate}
+                            my_projects={my_projects}
+                        />
+                    )}
+                </div>
                 <table className="w-full min-w-[640px] table-auto">
                     <thead>
                         <tr>
                             {[
                                 "No",
                                 "Date",
-                                "User",
-                                "Amount",
-                                "Project",
                                 "Tx hash",
+                                "Amount",
+                                "User",
+                                "Project",
                             ].map((el) => (
                                 <th
                                     key={el}
@@ -90,9 +120,9 @@ export default function PaymentReport({ payments_reports }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {payments_reports.map((value, key) => {
+                        {reportData.map((value, key) => {
                             const className = `py-3 px-5 ${
-                                key === payments_reports.length - 1
+                                key === reportData.length - 1
                                     ? ""
                                     : "border-b border-blue-gray-50"
                             }`;
@@ -116,12 +146,19 @@ export default function PaymentReport({ payments_reports }) {
                                         </Typography>
                                     </td>
                                     <td className={className}>
-                                        <Typography
-                                            variant="small"
-                                            className="text-xs font-medium text-blue-gray-600"
+                                        <a
+                                            href={value.txHash}
+                                            target="_blank"
+                                            className="cursor-pointer"
                                         >
-                                            {value.user_id}
-                                        </Typography>
+                                            <Typography
+                                                variant="small"
+                                                className="text-xs font-medium text-blue-gray-600"
+                                            >
+                                                {value.txHash.substring(0, 30)}
+                                                ...
+                                            </Typography>
+                                        </a>
                                     </td>
                                     <td className={className}>
                                         <Typography
@@ -136,7 +173,7 @@ export default function PaymentReport({ payments_reports }) {
                                             variant="small"
                                             className="text-xs font-medium text-blue-gray-600"
                                         >
-                                            {value.project}
+                                            {value.user_id}
                                         </Typography>
                                     </td>
                                     <td className={className}>
@@ -144,7 +181,7 @@ export default function PaymentReport({ payments_reports }) {
                                             variant="small"
                                             className="text-xs font-medium text-blue-gray-600"
                                         >
-                                            {value.txHash}
+                                            {value.project}
                                         </Typography>
                                     </td>
                                 </tr>
