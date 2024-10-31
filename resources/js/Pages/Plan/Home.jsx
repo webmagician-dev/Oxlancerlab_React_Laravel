@@ -15,7 +15,6 @@ import moment from "moment";
 import EditPlan from "./EditPlan";
 import AddPlan from "./AddPlan";
 import { toast } from "react-toastify";
-import Login from "../Auth/Login";
 
 export default function Plan() {
     const user = usePage().props.auth.user;
@@ -38,7 +37,7 @@ export default function Plan() {
         }
     };
 
-    const [week, setWeek] = useState({ firstDay: moment() });
+    const [week, setWeek] = useState();
 
     const [values, setValues] = useState({
         id: " ",
@@ -59,10 +58,8 @@ export default function Plan() {
 
     const convertDate = (date) => {
         let dt = new Date(date);
-        return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
-
+        return moment(dt).format("YYYY-MM-DD");
     };
-
 
     useEffect(() => {
         flash &&
@@ -72,18 +69,23 @@ export default function Plan() {
             });
     }, [flash]);
 
-    const isPeriodFrom = (plan, date) => {
-        return plan.period_from === date;
-    };
-    const isPeriodTo = (plan, date) => {
-        return plan.period_to === date;
-    };
+    function compareDates(dateStr1, dateStr2) {
+        // Create Date objects from the date strings
+        const date1 = new Date(dateStr1);
+        const date2 = new Date(dateStr2);
+
+        // Compare the dates using getTime()method
+        return date1.getTime() === date2.getTime();
+    }
+
     useEffect(() => {
         if (plans && week) {
             const filtered = plans.filter((plan) => {
                 return (
-                    isPeriodFrom(plan, convertDate(week.firstDay)) &&
-                    isPeriodTo(plan, convertDate(week.lastDay))
+                    compareDates(
+                        plan.period_from,
+                        convertDate(week.firstDay)
+                    ) && compareDates(plan.period_to, convertDate(week.lastDay))
                 );
             });
 
@@ -172,10 +174,11 @@ export default function Plan() {
                             </thead>
                             <tbody>
                                 {planData.map((value, key) => {
-                                    const className = `py-3 px-5 ${key === planData.length - 1
-                                        ? ""
-                                        : "border-b border-blue-gray-50"
-                                        }`;
+                                    const className = `py-3 px-5 ${
+                                        key === planData.length - 1
+                                            ? ""
+                                            : "border-b border-blue-gray-50"
+                                    }`;
 
                                     return (
                                         <tr

@@ -10,7 +10,7 @@ import {
     subMonths,
     getDaysInMonth,
 } from "date-fns";
-export const HonestWeekPicker = ({ cls }) => {
+export const HonestWeekPicker = ({ onChange }) => {
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState(new Date());
     const [week, setWeek] = useState({
@@ -19,7 +19,7 @@ export const HonestWeekPicker = ({ cls }) => {
     });
 
     useEffect(() => {
-        cls && cls(week);
+        onChange && onChange(week);
     }, [week]);
 
     const isLeapYear = () => {
@@ -89,9 +89,9 @@ export const HonestWeekPicker = ({ cls }) => {
             let cName = "single-number ";
             if (
                 new Date(week.firstDay).getTime() <=
-                new Date(currentDate).getTime() &&
+                    new Date(currentDate).getTime() &&
                 new Date(currentDate).getTime() <=
-                new Date(week.lastDay).getTime()
+                    new Date(week.lastDay).getTime()
             ) {
                 cName = cName + "selected-week";
             }
