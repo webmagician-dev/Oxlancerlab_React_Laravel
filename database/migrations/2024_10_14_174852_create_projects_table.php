@@ -26,7 +26,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->string('got_from');
             $table->enum('status', ['open', 'finished', 'closed']);
-            $table->integer('user_id');
+            $table->string('user_id');
             $table->timestamps();
         });
     }

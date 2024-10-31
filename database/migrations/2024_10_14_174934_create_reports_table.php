@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->integer('payments');
             $table->integer('bids');
+            $table->integer('new_accounts');
             $table->integer('new_projects');
             $table->integer('finished_projects');
             $table->integer('failed_projects');
-            $table->integer('user_id');
+            $table->string('user_id');
             $table->date('date');
             $table->timestamps();
         });

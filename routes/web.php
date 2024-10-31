@@ -41,6 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/plans', [PlanController::class, 'index'])->name('plans');
     Route::post('/plans/update', [PlanController::class, 'update'])->name('update_plan');
     Route::post('/plans/create', [PlanController::class, 'store'])->name('add_plan');
+
+    // Reports - Daily Report
+    Route::post('/report_daily/create', [ReportController::class, 'store'])->name('add_report_daily');
+
 });
 
 Route::middleware('auth')->group(function () {

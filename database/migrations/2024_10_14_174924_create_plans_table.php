@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('study');
             $table->date('period_from');
             $table->date('period_to');
-            $table->integer('user_id');
+            $table->string('user_id');
             $table->timestamps();
         });
     }
