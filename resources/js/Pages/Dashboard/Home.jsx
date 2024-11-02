@@ -28,28 +28,31 @@ import {
 } from "@/Pages/data";
 
 import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
+import { usePage } from "@inertiajs/react";
 
 export default function Dashboard() {
+    const cardinfos = [ '$' + usePage().props.total[0].totalmoney, usePage().props.total[0].totalproject, usePage().props.total[0].totalaccount, usePage().props.total[0].totalbid];
     return (
         <AuthenticatedLayout title={"Dashboard"}>
             {/* Home page */}
             <div className="mt-12">
                 <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
                     {statisticsCardsData.map(
-                        ({ icon, title, footer, ...rest }) => (
+                        (item, index) => (
                             <StatisticsCard
-                                key={title}
-                                {...rest}
-                                title={title}
-                                icon={React.createElement(icon, {
+                                key={item.title}
+                                color={item.color}
+                                value={cardinfos[index]}
+                                title={item.title}
+                                icon={React.createElement(item.icon, {
                                     className: "w-6 h-6 text-white",
                                 })}
                                 footer={
                                     <Typography className="font-normal text-blue-gray-600">
-                                        <strong className={footer.color}>
-                                            {footer.value}
+                                        <strong className={item.footer.color}>
+                                            {item.footer.value}
                                         </strong>
-                                        &nbsp;{footer.label}
+                                        &nbsp;{item.footer.label}
                                     </Typography>
                                 }
                             />

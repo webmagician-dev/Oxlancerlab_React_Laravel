@@ -6,7 +6,7 @@ const websiteViewsChart = {
   series: [
     {
       name: "Views",
-      data: [50, 20, 10, 22, 50, 10, 40],
+      data: [60, 20, 10, 22, 50, 10, 40],
     },
   ],
   options: {
@@ -107,22 +107,22 @@ const completedTasksChart = {
 export const statisticsChartsData = [
   {
     color: "white",
-    title: "Website View",
-    description: "Last Campaign Performance",
+    title: "Money View",
+    description: "Every team member's perfermence",
     footer: "campaign sent 2 days ago",
     chart: websiteViewsChart,
   },
   {
     color: "white",
-    title: "Daily Sales",
-    description: "15% increase in today sales",
+    title: "Month Perfermence",
+    description: "team power every month",
     footer: "updated 4 min ago",
     chart: dailySalesChart,
   },
   {
     color: "white",
-    title: "Completed Tasks",
-    description: "Last Campaign Performance",
+    title: "Month Bids",
+    description: "every month's totol team bids",
     footer: "just updated",
     chart: completedTasksChart,
   },

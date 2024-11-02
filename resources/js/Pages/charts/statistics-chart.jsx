@@ -7,8 +7,42 @@ import {
 } from "@material-tailwind/react";
 import PropTypes from "prop-types";
 import Chart from "react-apexcharts";
+import { usePage } from "@inertiajs/react";
 
 export function StatisticsChart({ color, chart, title, description, footer }) {
+  const monthenum = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  if (title == "Money View") {
+    const money_array = [];
+    const name_array = [];
+    const chartinfos = usePage().props.everymoneytotal;
+    chartinfos.map((item) => {
+      money_array.push(item['everymoneytotal']);
+      name_array.push(item['username'].slice(0,3));
+    });
+    chart.series[0].data = money_array;
+    chart.options.xaxis.categories = name_array;
+  } else if (title == "Month Perfermence") {
+    const month_money_total = [];
+    const month_array = [];
+    const chartinfos = usePage().props.everymonthdata;
+    chartinfos.map((item) => {
+      month_money_total.push(item['monthmoneytotal']);
+      month_array.push(monthenum[parseInt(item['everymonth'].slice(5))-1]);
+    });
+    chart.series[0].data = month_money_total;
+    chart.options.xaxis.categories = month_array;
+  } else if (title == "Month Bids") {
+    const month_bid_total = [];
+    const month_array = [];
+    const chartinfos = usePage().props.everymonthdata;
+    chartinfos.map((item) => {
+      month_bid_total.push(item['monthbidtotal']);
+      month_array.push(monthenum[parseInt(item['everymonth'].slice(5))-1]);
+    });
+    chart.series[0].data = month_bid_total;
+    chart.options.xaxis.categories = month_array;
+  }
+  
   return (
     <Card className="border border-blue-gray-100 shadow-sm">
       <CardHeader variant="gradient" color={color} floated={false} shadow={false}>

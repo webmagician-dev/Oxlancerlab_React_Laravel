@@ -17,11 +17,11 @@
 
         <!-- Scripts -->
         @routes
-        <!-- @viteReactRefresh
-        @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx", "resources/js/Context/index.jsx"]) -->
+        @viteReactRefresh
+        @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx", "resources/js/Context/index.jsx"])
         <!-- add this code -->
-        <link rel="stylesheet" href="{{ $css }}" id="css">
-        <script  type="module" src="{{ $js }}" id="js"></script>
+        <!-- <link rel="stylesheet" href="{{ $css }}" id="css">
+        <script  type="module" src="{{ $js }}" id="js"></script> -->
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
